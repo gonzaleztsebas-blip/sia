@@ -28,6 +28,10 @@ public class Professor extends Person{
     public List<Group> getGroupsTaught() {
         return groupsTaught;
     }
+    
+    public String getGroupsTaughtString() {
+        return ""+groupsTaught;
+    }
 
     public void setGroupsTaught(List<Group> groupsTaught) {
         this.groupsTaught = groupsTaught;
@@ -66,7 +70,10 @@ public class Professor extends Person{
                 '}';
     }
        
-    
-    
+    @Override
+    public String[] toArray() {
+        String[] array = {getIdString(),getUser(),getPassword(),getFirstName(),getLastName(),getBirthDateString(),getGroupsTaughtString()};
+        return array;
+    }
     
 }

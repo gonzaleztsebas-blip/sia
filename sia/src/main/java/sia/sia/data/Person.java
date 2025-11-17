@@ -4,6 +4,8 @@
  */
 package sia.sia.data;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -38,6 +40,10 @@ public class Person {
     public long getId() {
         return id;
     }
+    
+    public String getIdString(){
+        return String.valueOf(id);
+    }
 
     public String getUser() {
         return user;
@@ -58,7 +64,13 @@ public class Person {
     public Date getBirthDate() {
         return birthDate;
     }
-
+    
+    public String getBirthDateString(){
+        Format formatter = new SimpleDateFormat("yyyy-MM-dd");
+        String date = formatter.format(birthDate);
+        return date;
+    }
+    
     public void setId(long id) {
         this.id = id;
     }
@@ -132,5 +144,8 @@ public class Person {
                 '}';
     }
     
-    
+    public String[] toArray() {
+        String[] array = {getIdString(),getUser(),getPassword(),getFirstName(),getLastName(),getBirthDateString()};
+        return array;
+    }
 }

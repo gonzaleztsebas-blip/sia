@@ -29,6 +29,10 @@ public class Student extends Person{
         return attends;
     }
 
+    public String getAttendsString() {
+        return ""+(attends == null ? null : attends.stream().map(Group::getNumber).toList());
+    }
+    
     public void setAttends(List<Group> attends) {
         this.attends = attends;
     }
@@ -66,5 +70,10 @@ public class Student extends Person{
                 '}';
     }
     
+    @Override
+    public String[] toArray() {
+        String[] array = {getIdString(),getUser(),getPassword(),getFirstName(),getLastName(),getBirthDateString(),getAttendsString()};
+        return array;
+    }
     
 }
