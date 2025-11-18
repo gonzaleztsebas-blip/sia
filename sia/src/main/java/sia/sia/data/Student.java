@@ -12,16 +12,21 @@ import java.util.Objects;
  *
  * @author luzel
  */
-public class Student extends Person{
-    
+public class Student extends User {
+
     private List<Group> attends;
+
+    public Student(String user, String password) {
+        super(user, password, "student");
+    }
     
-    public Student(long id, String user, String password, String firstName, String lastName, Date birthDate) {
-        super(id, user, password, firstName, lastName, birthDate);
+    public Student(String user, String password, long id, String firstName, String lastName, String birthDate) {
+        super(user, password, "student", id, firstName, lastName, birthDate);
         this.attends = null;
     }
-    public Student(List<Group> attends, long id, String user, String password, String firstName, String lastName, Date birthDate) {
-        super(id, user, password, firstName, lastName, birthDate);
+
+    public Student(String user, String password, long id, String firstName, String lastName, String birthDate, List<Group> attends) {
+        super(user, password, "student", id, firstName, lastName, birthDate);
         this.attends = attends;
     }
 
@@ -30,9 +35,9 @@ public class Student extends Person{
     }
 
     public String getAttendsString() {
-        return ""+(attends == null ? null : attends.stream().map(Group::getNumber).toList());
+        return "" + (attends == null ? null : attends.stream().map(Group::getNumber).toList());
     }
-    
+
     public void setAttends(List<Group> attends) {
         this.attends = attends;
     }
@@ -61,19 +66,25 @@ public class Student extends Person{
 
     @Override
     public String toString() {
-        return "Student{" + "id=" + getId() + 
-                ", user=" + getUser() + 
-                ", firstName=" + getFirstName() + 
-                ", lastName=" + getLastName() + 
-                ", birthDate=" + getBirthDate() + 
-                ", attends=" + (attends == null ? null : attends.stream().map(Group::getNumber).toList()) +
-                '}';
+        return "Student{" + "user=" + getUser()
+                + ", role=" + getRole()
+                + ", id=" + getId()
+                + ", firstName=" + getFirstName()
+                + ", lastName=" + getLastName()
+                + ", birthDate=" + getBirthDate()
+                + ", attends=" + (attends == null ? null : attends.stream().map(Group::getNumber).toList())
+                + '}';
     }
-    
+
     @Override
     public String[] toArray() {
-        String[] array = {getIdString(),getUser(),getPassword(),getFirstName(),getLastName(),getBirthDateString(),getAttendsString()};
+        String[] array = {getUser(), getPassword(), getRole(), getIdString(), getFirstName(), getLastName(), getBirthDate(), getAttendsString()};
         return array;
     }
+
     
+    @Override
+    public void menu() {
+        System.out.println("Menú Admin: gestionar usuarios, reportes, etc.");
+    }
 }

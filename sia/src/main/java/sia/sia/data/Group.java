@@ -165,7 +165,7 @@ public class Group {
                 ", daysOfWeek=" + Arrays.toString(daysOfWeek) +
                 ", timesOfDay=" + Arrays.toString(timesOfDay) +
                 ", semester=" + semester +
-                ", represents=" + (represents == null ? null : represents.getNumber()) +
+                ", represents=" + (represents == null ? null : represents.getCode()) +
                 ", taughtBy=" + (taughtBy == null ? null : taughtBy.getId()) +
                 ", attendedBy=" + (attendedBy == null ? null : attendedBy.stream().map(Student::getId).toList()) +
                 ", issues=" + (issues == null ? null : issues.stream().map(grade -> grade.getGrade()).toList()) +

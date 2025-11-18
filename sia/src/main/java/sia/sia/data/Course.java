@@ -4,6 +4,7 @@
  */
 package sia.sia.data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,24 +13,32 @@ import java.util.Objects;
  * @author luzel
  */
 public class Course {
-    
-    private int number;
+
+    private long code;
     private String name;
+    private int credits;
+    private List<String> requisites;
     private List<Group> offeredAs;
-    
-    public Course(int number, String name) {
-        this.number = number;
+
+    public Course(String name, int credits) {
         this.name = name;
-        this.offeredAs = null;
+        this.credits = credits;
     }
-    public Course(int number, String name, List<Group> offeredAs) {
-        this.number = number;
+    
+    
+    public Course(long code, String name, int credits, List<String> requisites) {
         this.name = name;
-        this.offeredAs = offeredAs;
+        this.code = code;
+        this.credits = credits;
+        this.requisites = new ArrayList<>(requisites);
     }
 
-    public int getNumber() {
-        return number;
+    public Course(long code, String name, int credits, List<String> requisites, List<Group> offeredAs) {
+        this.name = name;
+        this.offeredAs = offeredAs;
+        this.code = code;
+        this.credits = credits;
+        this.requisites = new ArrayList<>(requisites);
     }
 
     public String getName() {
@@ -40,8 +49,24 @@ public class Course {
         return offeredAs;
     }
 
-    public void setNumber(int number) {
-        this.number = number;
+    public String getOfferedAsString() {
+        return offeredAs == null ? "[]" : offeredAs.stream().map(g -> String.valueOf(g.getNumber())).toList().toString();
+    }
+
+    public long getCode() {
+        return code;
+    }
+
+    public String getCodeString() {
+        return "" + code;
+    }
+
+    public int getCredits() {
+        return credits;
+    }
+
+    public List<String> getRequisites() {
+        return requisites;
     }
 
     public void setName(String name) {
@@ -52,12 +77,30 @@ public class Course {
         this.offeredAs = offeredAs;
     }
 
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public void setCredits(int credits) {
+        this.credits = credits;
+    }
+
+    public void setRequisites(List<String> requisites) {
+        this.requisites = new ArrayList<>(requisites);
+    }
+    
+    public void addRequisite(String newR){
+        this.requisites.add(newR);
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 47 * hash + this.number;
-        hash = 47 * hash + Objects.hashCode(this.name);
-        hash = 47 * hash + Objects.hashCode(this.offeredAs);
+        hash = (int) (59 * hash + this.code);
+        hash = 59 * hash + Objects.hashCode(this.name);
+        hash = 59 * hash + Objects.hashCode(this.offeredAs);
+        hash = 59 * hash + this.credits;
+        hash = 59 * hash + Objects.hashCode(this.requisites);
         return hash;
     }
 
@@ -73,22 +116,37 @@ public class Course {
             return false;
         }
         final Course other = (Course) obj;
-        if (this.number != other.number) {
+        if (this.code != other.code) {
+            return false;
+        }
+        if (this.credits != other.credits) {
             return false;
         }
         if (!Objects.equals(this.name, other.name)) {
             return false;
         }
-        return Objects.equals(this.offeredAs, other.offeredAs);
+        if (!Objects.equals(this.offeredAs, other.offeredAs)) {
+            return false;
+        }
+        return Objects.equals(this.requisites, other.requisites);
     }
 
     @Override
     public String toString() {
-        return "Course{" + "number=" + number + 
-                ", name=" + name + 
-                ", offeredAs=" + offeredAs + 
-                '}';
+        return "Course{" + "code=" + code
+                + ", name=" + name
+                + ", offeredAs=" + offeredAs
+                + ", credits=" + credits
+                + ", requisites=" + requisites
+                + '}';
     }
-    
-    
+
+    public String[] toArray() {
+        return new String[]{
+            String.valueOf(code),
+            name,
+            String.valueOf(credits),
+            String.join(",", requisites)
+        };
+    }
 }

@@ -12,25 +12,31 @@ import java.util.Objects;
  *
  * @author luzel
  */
-public class Professor extends Person{
-    
+public class Professor extends User {
+
     private List<Group> groupsTaught;
-    
-    public Professor(long id, String user, String password, String firstName, String lastName, Date birthDate) {
-        super(id, user, password, firstName, lastName, birthDate);
-        this.groupsTaught = null;
-    }    
-    public Professor(List<Group> groupsTaught, long id, String user, String password, String firstName, String lastName, Date birthDate) {
-        super(id, user, password, firstName, lastName, birthDate);
-        this.groupsTaught = groupsTaught;
+
+    public Professor(String user, String password) {
+        super(user, password, "professor");
     }
     
+
+    public Professor(String user, String password, long id, String firstName, String lastName, String birthDate) {
+        super(user, password, "professor", id, firstName, lastName, birthDate);
+        this.groupsTaught = null;
+    }
+
+    public Professor(String user, String password, long id, String firstName, String lastName, String birthDate, List<Group> groupsTaught) {
+        super(user, password, "professor", id, firstName, lastName, birthDate);
+        this.groupsTaught = groupsTaught;
+    }
+
     public List<Group> getGroupsTaught() {
         return groupsTaught;
     }
-    
+
     public String getGroupsTaughtString() {
-        return ""+groupsTaught;
+        return "" + groupsTaught;
     }
 
     public void setGroupsTaught(List<Group> groupsTaught) {
@@ -61,19 +67,24 @@ public class Professor extends Person{
 
     @Override
     public String toString() {
-        return "Student{" + "id=" + getId() + 
-                ", user=" + getUser() + 
-                ", firstName=" + getFirstName() + 
-                ", lastName=" + getLastName() + 
-                ", birthDate=" + getBirthDate() + 
-                ", groupsTaught=" + groupsTaught +
-                '}';
+        return "Student{" + "user=" + getUser()
+                + ", role=" + getRole()
+                + "id=" + getId()
+                + ", firstName=" + getFirstName()
+                + ", lastName=" + getLastName()
+                + ", birthDate=" + getBirthDate()
+                + ", groupsTaught=" + groupsTaught
+                + '}';
     }
-       
+
     @Override
     public String[] toArray() {
-        String[] array = {getIdString(),getUser(),getPassword(),getFirstName(),getLastName(),getBirthDateString(),getGroupsTaughtString()};
+        String[] array = {getUser(), getPassword(), getRole(), getIdString(), getFirstName(), getLastName(), getBirthDate(), getGroupsTaughtString()};
         return array;
     }
     
+    @Override
+    public void menu() {
+        System.out.println("Menú Admin: gestionar usuarios, reportes, etc.");
+    }
 }

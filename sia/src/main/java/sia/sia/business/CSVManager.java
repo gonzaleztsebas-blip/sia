@@ -14,28 +14,41 @@ import java.util.List;
 import sia.sia.data.*;
 
 public class CSVManager {
-    
-    public static boolean login(String username, String password) {
+
+    private final static String USER_FILE_PATH = "src\\main\\resources\\dataBase\\usersCSV.csv";
+    private final static String STUDENT_FILE_PATH = "src\\main\\resources\\dataBase\\studentCSV.csv";
+    private final static String PROFESSOR_FILE_PATH = "src\\main\\resources\\dataBase\\professorCSV.csv";
+    private final static String ADMIN_FILE_PATH = "src\\main\\resources\\dataBase\\adminCSV.csv";
+
+    public static User login(String username, String password) {
         try {
-            CSVReader reader = new CSVReader(new FileReader("src\\main\\resources\\dataBase\\usersCSV.csv"));
+            CSVReader reader = new CSVReader(new FileReader(USER_FILE_PATH));
             List<String[]> rows = reader.readAll();
             reader.close();
 
             for (String[] row : rows) {
                 if (row[0].equals(username) && row[1].equals(password)) {
-                    return true; // login correcto
+                    String role = row[2];
+                    switch (role) {
+                        case "admin":
+                            return new Admin(username, password);
+                        case "professor":
+                            return new Professor(username, password);
+                        case "student":
+                            return new Student(username, password);
+                    }
                 }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false; // usuario/contraseña incorrectos
+        return null; // usuario/contraseña incorrectos
     }
-    
-    public static boolean signUp(String username, String password) {
 
-        File file = new File("src/main/resources/dataBase/usersCSV.csv");
+    public static boolean signUp(String username, String password, String role) {
+
+        File file = new File(USER_FILE_PATH);
 
         try {
             // Validar si existe
@@ -45,9 +58,10 @@ public class CSVManager {
 
             // try-with-resources -> cierre automático y seguro
             try (CSVWriter writer = new CSVWriter(new FileWriter(file, true))) {
-                String[] data = { username, password };
+                String[] data = {username, password, role};
                 writer.writeNext(data);
             }
+            addRoleToCSV();
 
             return true;
 
@@ -60,7 +74,7 @@ public class CSVManager {
     // Ver si un usuario ya está registrado
     public static boolean userExists(String username) {
         try {
-            CSVReader reader = new CSVReader(new FileReader("src\\main\\resources\\dataBase\\usersCSV.csv"));
+            CSVReader reader = new CSVReader(new FileReader(USER_FILE_PATH));
             List<String[]> rows = reader.readAll();
             reader.close();
 
@@ -75,36 +89,58 @@ public class CSVManager {
         return false;
     }
 
-    public static void addStudentToCSV(Student student) {
-
-        File file = new File("src\\main\\resources\\dataBase\\studentsCSV.csv");
+    public static void addRoleToCSV() {
+        File fileS = new File(STUDENT_FILE_PATH);
+        File fileP = new File(PROFESSOR_FILE_PATH);
+        File fileA = new File(ADMIN_FILE_PATH);
         try {
-            FileWriter outputfile = new FileWriter(file, true);
-
-            try (CSVWriter writer = new CSVWriter(outputfile)) {
-
-                String[] data1 = student.toArray();
-                writer.writeNext(data1);
+            List<String[]> rows;
+            try (CSVReader reader = new CSVReader(new FileReader(USER_FILE_PATH))) {
+                rows = reader.readAll();
             }
-        } catch (IOException e) {
+
+            for (String[] row : rows) {
+                if (row[2].equals("student")) {
+                    try {
+                        FileWriter outputfile = new FileWriter(fileS, true);
+
+                        try (CSVWriter writer = new CSVWriter(outputfile)) {
+
+                            String[] data1 = row;
+                            writer.writeNext(data1);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (row[2].equals("professor")) {
+                    try {
+                        FileWriter outputfile = new FileWriter(fileP, true);
+
+                        try (CSVWriter writer = new CSVWriter(outputfile)) {
+
+                            String[] data1 = row;
+                            writer.writeNext(data1);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else if (row[2].equals("admin")) {
+                    try {
+                        FileWriter outputfile = new FileWriter(fileA, true);
+
+                        try (CSVWriter writer = new CSVWriter(outputfile)) {
+
+                            String[] data1 = row;
+                            writer.writeNext(data1);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void addProfessorToCSV(Professor professor) {
-
-        File file = new File("src\\main\\resources\\dataBase\\professorsCSV.csv");
-        try {
-            FileWriter outputfile = new FileWriter(file, true);
-
-            try (CSVWriter writer = new CSVWriter(outputfile)) {
-
-                String[] data1 = professor.toArray();
-                writer.writeNext(data1);
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }

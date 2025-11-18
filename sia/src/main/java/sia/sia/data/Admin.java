@@ -4,24 +4,85 @@
  */
 package sia.sia.data;
 
-import java.util.Date;
 
 /**
  *
  * @author luzel
  */
-public class Admin extends Person {
-    
-    public Admin(long id, String user, String password) {
-        super(id, user, password);
-    }
-       
-    public Admin(long id, String user, String password, String firstName, String lastName, Date birthDate) {
-        super(id, user, password, firstName, lastName, birthDate);
+public class Admin extends User {
+
+    private boolean permission;
+
+    public Admin(String user, String password) {
+        super(user, password, "admin");
     }
 
-    private void setPersonUser(Person person, String newUser){
+    public Admin(String user, String password, long id, String firstName, String lastName, String birthDate, boolean permission) {
+        super(user, password, "admin", id, firstName, lastName, birthDate);
+        this.permission = permission;
+    }
+
+ 
+    public boolean getPermission() {
+        return permission;
+    }
+    
+    public String getPermissionString() {
+        return "" + permission;
+    }
+
+    public void setPermission(boolean permission) {
+        this.permission = permission;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + (this.permission ? 1 : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Admin other = (Admin) obj;
+        return this.permission == other.permission;
+    }
+
+    @Override
+    public String toString() {
+        return "Admin{" + "permission=" + permission + '}';
+    }
+    
+    @Override
+    public String[] toArray() {
+        String[] array = {getUser(), getPassword(), getRole(), getIdString(), getFirstName(), getLastName(), getBirthDate(), getPermissionString()};
+        return array;
+    }
+    
+    private void setPersonUser(User person, String newUser) {
         person.setUser(newUser);
+    }
+
+    private void setPersonPassword(User person, String newPassword) {
+        person.setPassword(newPassword);
+    }
+
+    private void setPersonRole(User person, String newRole) {
+        person.setRole(newRole);
+    }
+    
+    @Override
+    public void menu() {
+        sia.sia.ui.AdminMenu.show();
     }
     
     

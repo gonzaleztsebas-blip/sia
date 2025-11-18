@@ -19,30 +19,32 @@ public class Sia {
 
     public static void main(String[] args) {
 
-        List<Group> groups = new ArrayList<>();
-
         Course course = new Course(
-                1001,
                 "Programacion Orientada a Objetos",
-                groups
+                2
+        );
+
+        Admin admin = new Admin(
+                "admin1",
+                "clave0"
         );
 
         Student student = new Student(
-                2L,
                 "estudiante1",
                 "clave1",
+                1L,
                 "Miguel",
                 "Sanchez",
-                new Date() // Fecha actual, solo para prueba
+                "29/05/2007" // Fecha actual, solo para prueba
         );
 
         Professor professor = new Professor(
-                1L,
                 "profe1",
                 "clave2",
+                3L,
                 "Carlos",
                 "Perez",
-                new Date() // Fecha actual, solo para prueba
+                "29/05/2007" // Fecha actual, solo para prueba
         );
 
         List<Student> students = new ArrayList<>();
@@ -64,7 +66,6 @@ public class Sia {
         Grade grade = new Grade(student, group, 4.5);
         grades.add(grade);
 
-        groups.add(group);
 
         System.out.println("----------------------");
         System.out.println(student.toString());
@@ -78,36 +79,53 @@ public class Sia {
         System.out.println(course.toString());
         System.out.println("----------------------");
 
-        addStudentToCSV(student);
-        addProfessorToCSV(professor);
-        
+
         Scanner scan = new Scanner(System.in);
+        while (true) {
+            System.out.println("1. Sign Up");
+            System.out.println("2. Login");
+            System.out.println("3. Salir");
+            System.out.print("Opcion: ");
+            
+            int option = scan.nextInt();
+            scan.nextLine();
 
-        System.out.println("1. Sign Up");
-        System.out.println("2. Login");
-        int option = scan.nextInt();
-        scan.nextLine(); // limpiar buffer
+            if (option == 1) {
+                System.out.print("Username: ");
+                String username = scan.nextLine();
 
-        System.out.print("Username: ");
-        String username = scan.nextLine();
+                System.out.print("Password: ");
+                String password = scan.nextLine();
 
-        System.out.print("Password: ");
-        String password = scan.nextLine();
+                System.out.print("Role: ");
+                String role = scan.nextLine();
 
-        if (option == 1) {
-            boolean ok = CSVManager.signUp(username, password);
-            if (ok) {
-                System.out.println("Usuario creado exitosamente!");
+                boolean ok = CSVManager.signUp(username, password, role);
+                if (ok) {
+                    System.out.println("Usuario creado exitosamente!");
+                } else {
+                    System.out.println("El usuario ya existe.");
+                }
+            } else if (option == 2) {
+                System.out.print("Username: ");
+                String username = scan.nextLine();
+                
+                System.out.print("Password: ");
+                String password = scan.nextLine();
+
+                User user = login(username, password);
+                if (user != null) {
+                    System.out.println("Bienvenido " + user.getUser());
+                    user.menu(); // ← cada clase hija tiene su propio menú
+                } else {
+                    System.out.println("Usuario o contraseña incorrectos");
+                }
+
             } else {
-                System.out.println("El usuario ya existe.");
+                System.out.println("Saliendo...");
+                break;
             }
-        } else if (option == 2) {
-            boolean ok = CSVManager.login(username, password);
-            if (ok) {
-                System.out.println("Bienvenido! Login correcto.");
-            } else {
-                System.out.println("Usuario o contraseña incorrectos.");
-            }
+
         }
     }
 }
