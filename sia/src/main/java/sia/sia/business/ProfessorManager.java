@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import sia.sia.data.Professor;
-import sia.sia.data.RandomNumbersManager;
+import sia.sia.data.CodeNumbersManager;
 
 public class ProfessorManager {
     
@@ -33,7 +33,18 @@ public class ProfessorManager {
             return new ArrayList<>();
         }
     }
-
+    
+    // MÉTODO NUEVO: Limpiar cache (requerido por el test)
+    public static void clearCache() {
+        professors = new ArrayList<>(); // Limpiar la lista en memoria
+        // También limpiar archivos si es necesario
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROFESSOR_FILE_PATH))) {
+            writer.write(""); // Archivo vacío
+        } catch (Exception e) {
+            System.out.println("No se pudo limpiar archivo: " + e.getMessage());
+        }
+    }
+    
     public static List<String[]> getProfessors() {
         return professors;
     }
@@ -43,11 +54,11 @@ public class ProfessorManager {
 
         Professor existing = findProfessor(user);
         if (existing != null) {
-            System.out.println("❌ Error: Ese usuario ya existe.");
+            System.out.println("Error: Ese usuario ya existe.");
             return;
         }
 
-        RandomNumbersManager idManager = new RandomNumbersManager();
+        CodeNumbersManager idManager = new CodeNumbersManager();
         long id = idManager.createNewId();
 
         // Crear estudiante
@@ -59,7 +70,7 @@ public class ProfessorManager {
         updateProfessorCSV();
         updateUserCSV();
         
-        System.out.println("✔ Profesor creado correctamente.");
+        System.out.println("Profesor creado correctamente.");
     }
 
     public static void deleteProfessor(String user) {
@@ -74,7 +85,7 @@ public class ProfessorManager {
         }
 
         if (index == -1) {
-            System.out.println("❌ No existe el profesor.");
+            System.out.println("No existe el profesor.");
             return;
         }
 
@@ -82,7 +93,7 @@ public class ProfessorManager {
         updateProfessorCSV();
         updateUserCSV();
 
-        System.out.println("✔ Profesor eliminado correctamente.");
+        System.out.println("Profesor eliminado correctamente.");
     }
 
     public static void listProfessors() {
@@ -112,7 +123,7 @@ public class ProfessorManager {
     
     public static void printFindProfessor(String username) {
         
-        System.out.println("✔ Profesor encontrado correctamente.");
+        System.out.println("Profesor encontrado correctamente.");
         System.out.println(Arrays.toString(findProfessor(username).toArray())); 
     }
 
@@ -124,12 +135,12 @@ public class ProfessorManager {
                 row[5] = newLast;
                 updateProfessorCSV();
                 updateUserCSV();
-                System.out.println("✔ Profesor actualizado.");
+                System.out.println("Profesor actualizado.");
                 return;
             }
         }
 
-        System.out.println("❌ No existe el profesor.");
+        System.out.println("No existe el profesor.");
     }
 
     public static void updateProfessorCSV() {
@@ -145,15 +156,48 @@ public class ProfessorManager {
         }
     }
     public static void updateUserCSV() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH))) {
-
-            for (String[] row : professors) {
-                writer.write(String.join(",", row[0]+row[1]+row[2]));
-                writer.newLine();
+        try {
+            // Leer todos los usuarios actuales
+            List<String[]> allUsers = new ArrayList<>();
+            
+            try (CSVReader reader = new CSVReader(new FileReader(USER_FILE_PATH))) {
+                allUsers = reader.readAll();
             }
-
+            
+            // Actualizar solo los profesores
+            for (String[] professor : professors) {
+                boolean found = false;
+                
+                for (int i = 0; i < allUsers.size(); i++) {
+                    if (allUsers.get(i)[0].equals(professor[0])) {
+                        // Actualizar user, password, role
+                        allUsers.set(i, new String[]{professor[0], professor[1], professor[2]});
+                        found = true;
+                        break;
+                    }
+                }
+                
+                // Si no existe, agregarlo
+                if (!found) {
+                    allUsers.add(new String[]{professor[0], professor[1], professor[2]});
+                }
+            }
+            
+            // Escribir todo de vuelta
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH))) {
+                for (String[] user : allUsers) {
+                    writer.write(user[0] + "," + user[1] + "," + user[2]);
+                    writer.newLine();
+                }
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    // MÉTODO NUEVO: Forzar recarga de estudiantes
+    public static void reload() {
+        professors = loadProfessors();
     }
 }

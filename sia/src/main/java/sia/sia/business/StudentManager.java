@@ -8,14 +8,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import sia.sia.data.Student;
-import sia.sia.data.RandomNumbersManager;
+import sia.sia.data.CodeNumbersManager;
 
 public class StudentManager {
     
     private final static String USER_FILE_PATH = "src\\main\\resources\\dataBase\\usersCSV.csv";
     private final static String STUDENT_FILE_PATH = "src\\main\\resources\\dataBase\\studentCSV.csv";
 
-    // Cargar una sola vez
+    // Lista en memoria - debe actualizarse cuando cambien los datos
     private static List<String[]> students = loadStudents();
 
     private static List<String[]> loadStudents() {
@@ -25,8 +25,19 @@ public class StudentManager {
             reader.close();
             return rows != null ? rows : new ArrayList<>();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("No se pudieron cargar estudiantes: " + e.getMessage());
             return new ArrayList<>();
+        }
+    }
+
+    // MÉTODO NUEVO: Limpiar cache (requerido por el test)
+    public static void clearCache() {
+        students = new ArrayList<>(); // Limpiar la lista en memoria
+        // También limpiar archivos si es necesario
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(STUDENT_FILE_PATH))) {
+            writer.write(""); // Archivo vacío
+        } catch (Exception e) {
+            System.out.println("No se pudo limpiar archivo: " + e.getMessage());
         }
     }
 
@@ -39,29 +50,37 @@ public class StudentManager {
 
         Student existing = findStudent(user);
         if (existing != null) {
-            System.out.println("❌ Error: Ese usuario ya existe.");
+            System.out.println("Error: Ese usuario ya existe.");
             return;
         }
 
-        RandomNumbersManager idManager = new RandomNumbersManager();
+        CodeNumbersManager idManager = new CodeNumbersManager();
         long id = idManager.createNewId();
 
-        // Crear estudiante
+        // Crear estudiante - Asegurar que el constructor coincida
         Student s = new Student(user, password, id, firstName, lastName, birthDate);
 
-        // Convertir a fila CSV
-        students.add(s.toArray());
-
+        // Convertir a fila CSV - formato: [user, password, "student", id, firstName, lastName, birthDate, ""]
+        String[] studentRow = new String[]{
+            user, 
+            password, 
+            "student", 
+            String.valueOf(id), 
+            firstName, 
+            lastName, 
+            birthDate, 
+            "" // attends (vacío por defecto)
+        };
+        
+        students.add(studentRow);
         updateStudentCSV();
         updateUserCSV();
         
-        System.out.println("✔ Estudiante creado correctamente.");
+        System.out.println("Estudiante " + user + " creado correctamente.");
     }
 
     public static void deleteStudent(String user) {
-
         int index = -1;
-
         for (int i = 0; i < students.size(); i++) {
             if (students.get(i)[0].equals(user)) {
                 index = i;
@@ -70,15 +89,14 @@ public class StudentManager {
         }
 
         if (index == -1) {
-            System.out.println("❌ No existe el estudiante.");
+            System.out.println("No existe el estudiante.");
             return;
         }
 
         students.remove(index);
         updateStudentCSV();
         updateUserCSV();
-
-        System.out.println("✔ Estudiante eliminado correctamente.");
+        System.out.println("Estudiante eliminado correctamente.");
     }
 
     public static void listStudents() {
@@ -88,68 +106,117 @@ public class StudentManager {
     }
 
     public static Student findStudent(String username) {
-
+        // Recargar estudiantes para asegurar datos actualizados
+        students = loadStudents();
+        
         for (String[] row : students) {
             if (row[0].equals(username)) {
-                // user, password, role, id, firstName, lastName, birthDate, attends
-                return new Student(
-                        row[0],     // user
-                        row[1],     // password
-                        Long.parseLong(row[3]), 
-                        row[4], 
-                        row[5], 
-                        row[6]      // birthDate STRING (tu constructor debe soportar esto)
-                );
+                try {
+                    return new Student(
+                            row[0],     // user
+                            row[1],     // password
+                            Long.parseLong(row[3]), // id
+                            row[4],     // firstName
+                            row[5],     // lastName
+                            row[6]      // birthDate
+                    );
+                } catch (Exception e) {
+                    System.out.println("Error parseando estudiante: " + e.getMessage());
+                    return null;
+                }
             }
         }
-
         return null;
     }
     
     public static void printFindStudent(String username) {
-        
-        System.out.println("✔ Estudiante encontrado correctamente.");
-        System.out.println(Arrays.toString(findStudent(username).toArray())); 
+        Student student = findStudent(username);
+        if (student != null) {
+            System.out.println("Estudiante encontrado correctamente.");
+            System.out.println(Arrays.toString(student.toArray())); 
+        } else {
+            System.out.println("Estudiante no encontrado: " + username);
+        }
     }
 
     public static void updateStudent(String username, String newFirst, String newLast) {
-
+        boolean updated = false;
+        
         for (String[] row : students) {
             if (row[0].equals(username)) {
                 row[4] = newFirst;
                 row[5] = newLast;
-                updateStudentCSV();
-                updateUserCSV();
-                System.out.println("✔ Estudiante actualizado.");
-                return;
+                updated = true;
+                break;
             }
         }
-
-        System.out.println("❌ No existe el estudiante.");
+        
+        if (updated) {
+            updateStudentCSV();
+            updateUserCSV();
+            System.out.println("Estudiante actualizado.");
+        } else {
+            System.out.println("No existe el estudiante.");
+        }
     }
 
     public static void updateStudentCSV() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(STUDENT_FILE_PATH))) {
-
             for (String[] row : students) {
                 writer.write(String.join(",", row));
                 writer.newLine();
             }
-
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error actualizando estudiantes CSV: " + e.getMessage());
         }
     }
+    
     public static void updateUserCSV() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH))) {
-
-            for (String[] row : students) {
-                writer.write(String.join(",", row[0]+row[1]+row[2]));
-                writer.newLine();
+        try {
+            // Leer todos los usuarios actuales
+            List<String[]> allUsers = new ArrayList<>();
+            
+            try (CSVReader reader = new CSVReader(new FileReader(USER_FILE_PATH))) {
+                allUsers = reader.readAll();
+            } catch (Exception e) {
+                // Si el archivo no existe, empezar vacío
+                allUsers = new ArrayList<>();
             }
-
+            
+            // Actualizar solo los estudiantes
+            for (String[] student : students) {
+                boolean found = false;
+                
+                for (int i = 0; i < allUsers.size(); i++) {
+                    if (allUsers.get(i)[0].equals(student[0])) {
+                        // Actualizar user, password, role
+                        allUsers.set(i, new String[]{student[0], student[1], student[2]});
+                        found = true;
+                        break;
+                    }
+                }
+                
+                // Si no existe, agregarlo
+                if (!found) {
+                    allUsers.add(new String[]{student[0], student[1], student[2]});
+                }
+            }
+            
+            // Escribir todo de vuelta
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH))) {
+                for (String[] user : allUsers) {
+                    writer.write(user[0] + "," + user[1] + "," + user[2]);
+                    writer.newLine();
+                }
+            }
+            
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error actualizando usuarios CSV: " + e.getMessage());
         }
+    }
+
+    // MÉTODO NUEVO: Forzar recarga de estudiantes
+    public static void reload() {
+        students = loadStudents();
     }
 }

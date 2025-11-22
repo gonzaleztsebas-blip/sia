@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import sia.sia.data.Course;
-import sia.sia.data.RandomNumbersManager;
+import sia.sia.data.CodeNumbersManager;
 
 /**
  *
@@ -37,6 +37,15 @@ public class CourseManager {
         }
     }
 
+    public static void clearCache() {
+        courses = new ArrayList<>(); // Limpiar la lista en memoria
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(COURSES_FILE_PATH))) {
+            writer.write(""); // Archivo vacío
+        } catch (Exception e) {
+            System.out.println("No se pudo limpiar archivo de cursos: " + e.getMessage());
+        }
+    }
+
     public static List<String[]> getCourses() {
         return courses;
     }
@@ -44,11 +53,11 @@ public class CourseManager {
     public static void createCourse(String name, int credits, List<String> requisites) {
         Course existing = findCourse(name);
         if (existing != null) {
-            System.out.println("❌ Error: Ese curso ya existe.");
+            System.out.println("Error: Ese curso ya existe.");
             return;
         }
 
-        RandomNumbersManager codeManager = new RandomNumbersManager();
+        CodeNumbersManager codeManager = new CodeNumbersManager();
         long code = codeManager.createNewCode();
 
         Course course = new Course(code, name, credits, requisites);
@@ -58,7 +67,7 @@ public class CourseManager {
 
         updateCourseCSV();
 
-        System.out.println("✔ Curso creado correctamente.");
+        System.out.println("Curso creado correctamente.");
     }
 
     public static void updateCourse(long code, String newName, int newCredits, List<String> newRequisites) {
@@ -68,26 +77,33 @@ public class CourseManager {
                 row[2] = "" + newCredits;
                 row[3] = String.join(", ", newRequisites);
                 updateCourseCSV();
-                System.out.println("✔ Curso actualizado.");
+                System.out.println("Curso actualizado.");
                 return;
             }
         }
 
-        System.out.println("❌ No existe el estudiante.");
+        System.out.println("No existe el estudiante.");
     }
 
     public static Course findCourse(String name) {
         for (String[] row : courses) {
 
             if (row.length < 4) {
-                continue; // <-- evita reventar
+                continue;
             }
+
             if (row[1].equals(name)) {
+
+                String cleaned = row[3].replace("[", "").replace("]", "").trim();
+                List<String> reqs = cleaned.isBlank()
+                        ? new ArrayList<>()
+                        : Arrays.asList(cleaned.split("\\s*;\\s*"));
+
                 return new Course(
                         Long.parseLong(row[0]),
                         row[1],
                         Integer.parseInt(row[2]),
-                        Arrays.asList(row[3].trim().split("\\s*;\\s*"))
+                        reqs
                 );
             }
         }
@@ -98,14 +114,19 @@ public class CourseManager {
         for (String[] row : courses) {
 
             if (row.length < 4) {
-                continue; // <-- evita reventar
+                continue;
             }
             if (row[0].equals(String.valueOf(code))) {
+                String cleaned = row[3].replace("[", "").replace("]", "").trim();
+                List<String> reqs = cleaned.isBlank()
+                        ? new ArrayList<>()
+                        : Arrays.asList(cleaned.split("\\s*;\\s*"));
+
                 return new Course(
                         Long.parseLong(row[0]),
                         row[1],
                         Integer.parseInt(row[2]),
-                        Arrays.asList(row[3].trim().split("\\s*;\\s*"))
+                        reqs
                 );
             }
         }
@@ -130,33 +151,35 @@ public class CourseManager {
         }
 
         if (index == -1) {
-            System.out.println("❌ No existe el estudiante.");
+            System.out.println("No existe el estudiante.");
             return;
         }
 
         courses.remove(index);
         updateCourseCSV();
 
-        System.out.println("✔ Estudiante eliminado correctamente.");
+        System.out.println("Estudiante eliminado correctamente.");
     }
 
-    public static void addRequisite(long code, String requisiteCode) {
+    public static void addRequisite(long code, List<String> requisiteCode) {
         for (String[] row : courses) {
             if (row[0].equals(String.valueOf(code))) {
 
                 List<String> updated = new ArrayList<>();
 
                 if (row[3] != null && !row[3].isBlank()) {
-                    updated.addAll(Arrays.asList(row[3].split(",")));
+                    updated.addAll(Arrays.asList(row[3].split(";")));
                 }
 
-                updated.add(requisiteCode.trim());
+                // Agregar los nuevos requisitos
+                updated.addAll(requisiteCode);
 
-                row[3] = String.join(",", updated);
+                // Volver a unirlos con ';'
+                row[3] = String.join(";", updated);
 
                 updateCourseCSV();
 
-                System.out.println("✔ Requisito agregado correctamente.");
+                System.out.println("Requisito agregado correctamente.");
                 return;
             }
         }
@@ -171,12 +194,16 @@ public class CourseManager {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(COURSES_FILE_PATH))) {
 
             for (String[] row : courses) {
-                writer.write(String.join(",", row));
+                writer.write(row[0] + "," + row[1] + "," + row[2] + "," + row[3] + "");
                 writer.newLine();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void reload() {
+        courses = loadCourses();
     }
 }

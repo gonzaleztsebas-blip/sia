@@ -1,0 +1,15 @@
+prof_garcia,profpass1,professor,64269,Luis,Garcia,1975-06-15,null
+prof_rodriguez,profpass2,professor,92137,Ana,Rodriguez,1980-09-20,null
+test_prof,profpass,professor,37859,Test,Professor,1980-01-01,null
+"prof_garcia","profpass1","professor"
+"prof_rodriguez","profpass2","professor"
+"test_prof","profpass","professor"
+"prof_garcia","profpass1","professor"
+"prof_rodriguez","profpass2","professor"
+"test_prof","profpass","professor"
+"prof_garcia","profpass1","professor"
+"prof_rodriguez","profpass2","professor"
+"test_prof","profpass","professor"
+"prof_garcia","profpass1","professor"
+"prof_rodriguez","profpass2","professor"
+"test_prof","profpass","professor"

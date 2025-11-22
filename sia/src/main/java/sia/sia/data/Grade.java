@@ -4,85 +4,55 @@
  */
 package sia.sia.data;
 
-import java.util.Objects;
+import sia.sia.business.GroupManager;
+import sia.sia.business.StudentManager;
 
-/**
- *
- * @author luzel
- */
 public class Grade {
-    
-    private Student student;
-    private Group group;
+    private String studentUsername;
+    private String groupNumber;
     private double grade;
-
-    public Grade(Student student, Group group, double garde) {
-        this.student = student;
-        this.group = group;
+    
+    // CONSTRUCTOR 1: Para usar con Student y Group objects
+    public Grade(Student student, Group group, double grade) {
+        this.studentUsername = student.getUser();
+        this.groupNumber = String.valueOf(group.getNumber());
+        this.grade = grade; // ¡IMPORTANTE: asignar el parámetro!
+        System.out.println("DEBUG Grade Constructor: " + student.getUser() + ", " + group.getNumber() + ", " + grade);
+    }
+    
+    // CONSTRUCTOR 2: Para usar directamente con strings (alternativo)
+    public Grade(String studentUsername, String groupNumber, double grade) {
+        this.studentUsername = studentUsername;
+        this.groupNumber = groupNumber;
         this.grade = grade;
+        System.out.println("DEBUG Grade Constructor: " + studentUsername + ", " + groupNumber + ", " + grade);
     }
-
-    public Student getStudent() {
-        return student;
+    
+    // Getters
+    public String getStudentUsername() {
+        return studentUsername;
     }
-
-    public Group getGroup() {
-        return group;
+    
+    public String getGroupNumber() {
+        return groupNumber;
     }
-
+    
     public double getGrade() {
-        return grade;
+        System.out.println("DEBUG getGrade(): retornando " + this.grade);
+        return this.grade; // ¡NO return 0.0!
     }
-
-    public void setStudent(Student student) {
-        this.student = student;
+    
+    public Student getStudent() {
+        return StudentManager.findStudent(studentUsername);
     }
-
-    public void setGroup(Group group) {
-        this.group = group;
+    
+    public Group getGroup() {
+        return GroupManager.findGroup(groupNumber);
     }
-
-    public void setGrade(double grade) {
-        this.grade = grade;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 89 * hash + Objects.hashCode(this.student);
-        hash = 89 * hash + Objects.hashCode(this.group);
-        hash = 89 * hash + (int) (Double.doubleToLongBits(this.grade) ^ (Double.doubleToLongBits(this.grade) >>> 32));
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Grade other = (Grade) obj;
-        if (Double.doubleToLongBits(this.grade) != Double.doubleToLongBits(other.grade)) {
-            return false;
-        }
-        if (!Objects.equals(this.student, other.student)) {
-            return false;
-        }
-        return Objects.equals(this.group, other.group);
-    }
-
+    
     @Override
     public String toString() {
-        return "Grade{" + ", student=" + (student == null ? null : student.getId()) + 
-                ", group=" + group + 
-                ", group=" + (group == null ? null : group.getNumber()) + 
-                '}';
+        return String.format("Grade{student=%s, group=%s, grade=%.2f}", 
+                           studentUsername, groupNumber, grade);
     }
-    
-    
 }

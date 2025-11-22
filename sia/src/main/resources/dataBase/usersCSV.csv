@@ -1,1 +1,12 @@
-"1","1","admin"
+juan123,pass123,student
+maria456,pass456,student
+carlos789,pass789,student
+prof_garcia,profpass1,professor
+prof_rodriguez,profpass2,professor
+test_student1,pass1,student
+test_student2,pass2,student
+test_prof,profpass,professor
+"admin","admin123","admin"
+"juan_perez","student123","student"
+"maria_lopez","student123","student"
+"carlos_gomez","student123","student"

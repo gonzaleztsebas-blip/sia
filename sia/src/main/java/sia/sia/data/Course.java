@@ -7,6 +7,7 @@ package sia.sia.data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -24,8 +25,7 @@ public class Course {
         this.name = name;
         this.credits = credits;
     }
-    
-    
+
     public Course(long code, String name, int credits, List<String> requisites) {
         this.name = name;
         this.code = code;
@@ -50,7 +50,12 @@ public class Course {
     }
 
     public String getOfferedAsString() {
-        return offeredAs == null ? "[]" : offeredAs.stream().map(g -> String.valueOf(g.getNumber())).toList().toString();
+        if (offeredAs == null) {
+            return "";
+        }
+        return offeredAs.stream()
+                .map(g -> String.valueOf(g.getNumber()))
+                .collect(Collectors.joining(";"));
     }
 
     public long getCode() {
@@ -88,8 +93,8 @@ public class Course {
     public void setRequisites(List<String> requisites) {
         this.requisites = new ArrayList<>(requisites);
     }
-    
-    public void addRequisite(String newR){
+
+    public void addRequisite(String newR) {
         this.requisites.add(newR);
     }
 
@@ -146,7 +151,6 @@ public class Course {
             String.valueOf(code),
             name,
             String.valueOf(credits),
-            String.join(",", requisites)
-        };
+            "[" + String.join(";", requisites) + "]"};
     }
 }

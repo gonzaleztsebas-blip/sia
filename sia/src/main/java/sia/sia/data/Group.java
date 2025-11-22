@@ -172,5 +172,25 @@ public class Group {
                 '}';
     }
     
+    public String[] toArray() {
+    return new String[]{
+        String.valueOf(number),
+        daysOfWeek == null ? "" : String.join(";", daysOfWeek),
+        timesOfDay == null ? "" : String.join(";", timesOfDay),
+        semester == null ? "" : semester,
+        represents == null ? "" : String.valueOf(represents.getCode()),
+        taughtBy == null ? "" : String.valueOf(taughtBy.getId()),
+        attendedBy == null ? "" :
+                attendedBy.stream()
+                        .map(student -> String.valueOf(student.getId()))
+                        .reduce((a, b) -> a + ";" + b)
+                        .orElse(""),
+        issues == null ? "" :
+                issues.stream()
+                        .map(grade -> String.valueOf(grade.getGrade()))
+                        .reduce((a, b) -> a + ";" + b)
+                        .orElse("")
+    };
+}
     
 }
