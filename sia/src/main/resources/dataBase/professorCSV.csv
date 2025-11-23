@@ -13,3 +13,6 @@ test_prof,profpass,professor,37859,Test,Professor,1980-01-01,null
 "prof_garcia","profpass1","professor"
 "prof_rodriguez","profpass2","professor"
 "test_prof","profpass","professor"
+"prof_garcia","profpass1","professor"
+"prof_rodriguez","profpass2","professor"
+"test_prof","profpass","professor"
