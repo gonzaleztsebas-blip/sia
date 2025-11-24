@@ -27,6 +27,7 @@ public class SIAFrame extends JFrame{
         
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
+        mainPanel.setBackground(UIColors.BACKGROUND);
         
         mainPanel.add(new LoginPanel(this), "LOGIN");
         adminPanel = new AdminDashboardPanel(this);
@@ -37,6 +38,7 @@ public class SIAFrame extends JFrame{
         mainPanel.add(professorPanel, "PROFESSOR_DASHBOARD");
         
         add(mainPanel);
+        setBackground(UIColors.BACKGROUND);
         
         cardLayout.show(mainPanel, "LOGIN");
     }

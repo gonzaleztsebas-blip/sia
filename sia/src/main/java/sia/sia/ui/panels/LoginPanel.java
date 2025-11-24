@@ -26,54 +26,79 @@ public class LoginPanel extends JPanel{
     
     public LoginPanel(SIAFrame parent){
         parentFrame = parent;
+        setBackground(UIColors.BACKGROUND);
         initComponents();
         addActionListeners();
     }
     
     private void initComponents(){
         setLayout(new BorderLayout());
+        setBackground(UIColors.BACKGROUND);
         initTittlePanel();
         add(tittlePanel, BorderLayout.NORTH);
         initFormPanel();
         add(formPanel, BorderLayout.CENTER);
         initFooterPanel();
         add(footerPanel, BorderLayout.SOUTH);
-        add(new JPanel(), BorderLayout.EAST);
-        add(new JPanel(), BorderLayout.WEST);
+        JPanel eastPanel = new JPanel();
+        eastPanel.setBackground(UIColors.BACKGROUND);
+        add(eastPanel, BorderLayout.EAST);
+        JPanel westPanel = new JPanel();
+        westPanel.setBackground(UIColors.BACKGROUND);
+        add(westPanel, BorderLayout.WEST);
     }
     
     private void initTittlePanel(){
         tittlePanel = new JPanel();
         tittlePanel.setLayout(new BorderLayout());
-        tittlePanel.add(new JLabel(""), BorderLayout.NORTH);
+        tittlePanel.setBackground(UIColors.BACKGROUND);
+        JPanel northGap = new JPanel();
+        northGap.setBackground(UIColors.BACKGROUND);
+        tittlePanel.add(northGap, BorderLayout.NORTH);
         JLabel title = new JLabel("Sistema de Información Académica");
         title.setHorizontalAlignment(JLabel.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 18));
+        title.setForeground(UIColors.LABEL_TEXT);
         tittlePanel.add(title, BorderLayout.CENTER);
-        tittlePanel.add(new JLabel(""), BorderLayout.SOUTH);
+        JPanel southGap = new JPanel();
+        southGap.setBackground(UIColors.BACKGROUND);
+        tittlePanel.add(southGap, BorderLayout.SOUTH);
     }
     
     private void initFormPanel() {
         // Panel que ocupa el centro pero NO se estira a lo ancho
         JPanel outer = new JPanel(new GridBagLayout());
+        outer.setBackground(UIColors.BACKGROUND);
 
         // panel del formulario
         formPanel = new JPanel(new GridLayout(3, 2, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        formPanel.setBackground(new Color(250, 250, 252));
+        formPanel.setBackground(UIColors.FORM_BACKGROUND);
 
         formPanel.setPreferredSize(new Dimension(300, 120));
 
-        formPanel.add(new JLabel("Usuario: "));
+        JLabel userLabel = new JLabel("Usuario: ");
+        userLabel.setForeground(UIColors.LABEL_TEXT);
+        formPanel.add(userLabel);
         txtUser = new JTextField(12);
+        txtUser.setBackground(Color.WHITE);
+        txtUser.setForeground(UIColors.LABEL_TEXT);
         formPanel.add(txtUser);
 
-        formPanel.add(new JLabel("Contraseña: "));
+        JLabel passLabel = new JLabel("Contraseña: ");
+        passLabel.setForeground(UIColors.LABEL_TEXT);
+        formPanel.add(passLabel);
         pswPassword = new JPasswordField(12);
+        pswPassword.setBackground(Color.WHITE);
+        pswPassword.setForeground(UIColors.LABEL_TEXT);
         formPanel.add(pswPassword);
 
         formPanel.add(new JLabel(""));
         btnEnter = new JButton("Iniciar Sesión");
+        btnEnter.setBackground(UIColors.BUTTON);
+        btnEnter.setForeground(Color.WHITE);
+        btnEnter.setFont(new Font("Arial", Font.BOLD, 12));
+        btnEnter.setFocusPainted(false);
         formPanel.add(btnEnter);
 
         outer.add(formPanel);  
@@ -86,12 +111,14 @@ public class LoginPanel extends JPanel{
     private void initFooterPanel() {
         footerPanel = new JPanel();
         footerPanel.setLayout(new BoxLayout(footerPanel, BoxLayout.Y_AXIS));
+        footerPanel.setBackground(UIColors.BACKGROUND);
 
         footerPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0)); 
-        footerPanel.setOpaque(false); // opcional, para que se vea más limpio
+        footerPanel.setOpaque(true);
 
         JLabel lblCuenta = new JLabel("Contacte al administrador para crear una nueva cuenta");
         lblCuenta.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lblCuenta.setForeground(UIColors.LABEL_TEXT);
 
         footerPanel.add(lblCuenta);
         footerPanel.add(Box.createVerticalStrut(25)); // espacio pequeño

@@ -5,6 +5,7 @@
 package sia.sia.ui.panels;
 
 import sia.sia.ui.SIAFrame;
+import sia.sia.ui.UIColors;
 import sia.sia.ui.panels.student.*;
 import javax.swing.*;
 import java.awt.*;
@@ -18,6 +19,7 @@ public class StudentDashboardPanel extends JPanel {
     public StudentDashboardPanel(SIAFrame parent) {
         this.parentFrame = parent;
         this.currentUser = "";
+        setBackground(UIColors.BACKGROUND);
         initComponents();
     }
     
@@ -41,11 +43,17 @@ public class StudentDashboardPanel extends JPanel {
     
     private void initHeader() {
         JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(UIColors.FORM_BACKGROUND);
         JLabel titleLabel = new JLabel("Panel del Estudiante", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setForeground(UIColors.LABEL_TEXT);
         headerPanel.add(titleLabel, BorderLayout.CENTER);
         
         JButton logoutBtn = new JButton("Cerrar Sesión");
+        logoutBtn.setBackground(UIColors.BUTTON);
+        logoutBtn.setForeground(Color.WHITE);
+        logoutBtn.setFont(new Font("Arial", Font.BOLD, 11));
+        logoutBtn.setFocusPainted(false);
         logoutBtn.addActionListener(e -> parentFrame.showCard("LOGIN"));
         headerPanel.add(logoutBtn, BorderLayout.EAST);
         
@@ -56,6 +64,7 @@ public class StudentDashboardPanel extends JPanel {
     private void initSidebar() {
         JPanel sidebarPanel = new JPanel(new GridLayout(8, 1, 5, 5));
         sidebarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        sidebarPanel.setBackground(UIColors.BACKGROUND);
         
         String[] menuItems = {
             "Historial Académico",
@@ -70,6 +79,10 @@ public class StudentDashboardPanel extends JPanel {
         
         for (String item : menuItems) {
             JButton button = new JButton(item);
+            button.setBackground(UIColors.BUTTON);
+            button.setForeground(Color.WHITE);
+            button.setFont(new Font("Arial", Font.BOLD, 11));
+            button.setFocusPainted(false);
             button.addActionListener(e -> showContent(item));
             sidebarPanel.add(button);
         }
@@ -80,6 +93,7 @@ public class StudentDashboardPanel extends JPanel {
     private void initContentArea() {
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
+        contentPanel.setBackground(UIColors.FORM_BACKGROUND);
         
         JPanel welcomePanel = new JPanel(new BorderLayout());
         welcomePanel.add(new JLabel("Seleccione una opción del menú", JLabel.CENTER));

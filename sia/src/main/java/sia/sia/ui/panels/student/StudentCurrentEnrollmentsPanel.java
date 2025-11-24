@@ -41,7 +41,7 @@ public class StudentCurrentEnrollmentsPanel extends JPanel {
         List<Group> enrollments = EnrollmentManager.getCurrentEnrollments(currentUser);
         for (Group group : enrollments) {
             model.addRow(new Object[]{
-                group.getNumber(),
+                String.valueOf(group.getNumber()),
                 group.getRepresents().getName(),
                 group.getRepresents().getCredits(),
                 group.getTaughtBy() != null ? group.getTaughtBy().getFirstName() : "N/A"

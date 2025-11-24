@@ -47,7 +47,7 @@ public class StudentSchedulePanel extends JPanel {
                 for (int i = 0; i < days.length && i < times.length; i++) {
                     model.addRow(new Object[]{
                         group.getRepresents().getName(),
-                        group.getNumber(),
+                        String.valueOf(group.getNumber()),
                         getDayName(days[i]),
                         times[i]
                     });

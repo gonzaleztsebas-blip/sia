@@ -20,22 +20,28 @@ public class StudentApprovedCreditsPanel extends JPanel {
         setBorder(BorderFactory.createTitledBorder("Créditos Aprobados"));
         
         JButton refreshBtn = new JButton("Actualizar");
+        JLabel totalLabel = new JLabel("Total Créditos: 0");
+        totalLabel.setFont(new Font("Arial", Font.BOLD, 14));
         
         DefaultTableModel model = new DefaultTableModel(
-            new String[]{"Materia", "Créditos", "Calificación", "Estado"}, 0
+            new String[]{"Materia", "Créditos"}, 0
         );
         JTable table = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(table);
         
-        refreshBtn.addActionListener(e -> loadApprovedCredits(model));
+        refreshBtn.addActionListener(e -> loadApprovedCredits(model, totalLabel));
         
-        add(refreshBtn, BorderLayout.NORTH);
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(refreshBtn, BorderLayout.WEST);
+        topPanel.add(totalLabel, BorderLayout.CENTER);
+        
+        add(topPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         
-        loadApprovedCredits(model);
+        loadApprovedCredits(model, totalLabel);
     }
     
-    private void loadApprovedCredits(DefaultTableModel model) {
+    private void loadApprovedCredits(DefaultTableModel model, JLabel totalLabel) {
         model.setRowCount(0);
         
         List<Group> enrollments = EnrollmentManager.getCurrentEnrollments(currentUser);
@@ -47,13 +53,10 @@ public class StudentApprovedCreditsPanel extends JPanel {
             
             model.addRow(new Object[]{
                 group.getRepresents().getName(),
-                groupCredits,
-                "--",
-                "Aprobado"
+                groupCredits
             });
         }
         
-        JLabel totalLabel = new JLabel("Total Créditos: " + totalCredits);
-        totalLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        totalLabel.setText("Total Créditos: " + totalCredits);
     }
 }

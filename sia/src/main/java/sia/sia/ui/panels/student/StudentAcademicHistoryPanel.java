@@ -1,9 +1,11 @@
 package sia.sia.ui.panels.student;
 
 import sia.sia.business.GradeManager;
+import sia.sia.data.Grade;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.List;
 
 public class StudentAcademicHistoryPanel extends JPanel {
     private String currentUser;
@@ -35,6 +37,20 @@ public class StudentAcademicHistoryPanel extends JPanel {
     
     private void loadAcademicHistory(DefaultTableModel model) {
         model.setRowCount(0);
-        GradeManager.listStudentGrades(currentUser);
+        
+        List<Grade> grades = GradeManager.getGradesByStudent(currentUser);
+        for (Grade grade : grades) {
+            String courseName = grade.getGroup().getRepresents().getName();
+            long groupNumber = grade.getGroup().getNumber();
+            double gradeValue = grade.getGrade();
+            String status = gradeValue >= 3.0 ? "APROBADO" : "REPROBADO";
+            
+            model.addRow(new Object[]{
+                courseName,
+                groupNumber,
+                String.format("%.2f", gradeValue),
+                status
+            });
+        }
     }
 }
