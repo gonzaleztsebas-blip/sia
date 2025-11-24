@@ -90,7 +90,7 @@ public class SystemTest {
 
         // Actualizar estudiante
         System.out.println("Actualizando estudiante juan123...");
-        StudentManager.updateStudent("juan123", "Juan Carlos", "Perez Gomez");
+        StudentManager.updateStudent("juan123", "Juan Carlos", "Perez Gomez", "2000-12-3");
 
         // Verificar actualización
         var updated = StudentManager.findStudent("juan123");

@@ -139,13 +139,14 @@ public class StudentManager {
         }
     }
 
-    public static void updateStudent(String username, String newFirst, String newLast) {
+    public static void updateStudent(String username, String newFirst, String newLast, String newBirthDate) {
         boolean updated = false;
         
         for (String[] row : students) {
             if (row[0].equals(username)) {
                 row[4] = newFirst;
                 row[5] = newLast;
+                row[6] = newBirthDate;
                 updated = true;
                 break;
             }
@@ -175,41 +176,34 @@ public class StudentManager {
         try {
             // Leer todos los usuarios actuales
             List<String[]> allUsers = new ArrayList<>();
-            
+
             try (CSVReader reader = new CSVReader(new FileReader(USER_FILE_PATH))) {
                 allUsers = reader.readAll();
             } catch (Exception e) {
-                // Si el archivo no existe, empezar vacío
                 allUsers = new ArrayList<>();
             }
-            
-            // Actualizar solo los estudiantes
-            for (String[] student : students) {
-                boolean found = false;
-                
-                for (int i = 0; i < allUsers.size(); i++) {
-                    if (allUsers.get(i)[0].equals(student[0])) {
-                        // Actualizar user, password, role
-                        allUsers.set(i, new String[]{student[0], student[1], student[2]});
-                        found = true;
-                        break;
-                    }
-                }
-                
-                // Si no existe, agregarlo
-                if (!found) {
-                    allUsers.add(new String[]{student[0], student[1], student[2]});
+
+            // 1. Primero eliminar todos los estudiantes existentes
+            List<String[]> usersToKeep = new ArrayList<>();
+            for (String[] user : allUsers) {
+                if (user.length >= 3 && !user[2].equals("student")) {
+                    usersToKeep.add(user); // Mantener solo no-estudiantes
                 }
             }
-            
-            // Escribir todo de vuelta
+
+            // 2. Luego agregar solo los estudiantes actuales
+            for (String[] student : students) {
+                usersToKeep.add(new String[]{student[0], student[1], student[2]});
+            }
+
+            // 3. Escribir todo de vuelta
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH))) {
-                for (String[] user : allUsers) {
+                for (String[] user : usersToKeep) {
                     writer.write(user[0] + "," + user[1] + "," + user[2]);
                     writer.newLine();
                 }
             }
-            
+
         } catch (Exception e) {
             System.out.println("Error actualizando usuarios CSV: " + e.getMessage());
         }

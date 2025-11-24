@@ -93,7 +93,7 @@ public class StudentManagementMenu {
         System.out.print("Nuevo apellido: ");
         String newLastName = scan.nextLine().trim();
 
-        StudentManager.updateStudent(username, newFirstName, newLastName);
+        StudentManager.updateStudent(username, newFirstName, newLastName, "");
     }
 
     private static void findStudent(Scanner scan) {
