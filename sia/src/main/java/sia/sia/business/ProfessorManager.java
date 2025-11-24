@@ -127,12 +127,13 @@ public class ProfessorManager {
         System.out.println(Arrays.toString(findProfessor(username).toArray())); 
     }
 
-    public static void updateProfessor(String username, String newFirst, String newLast) {
+    public static void updateProfessor(String username, String newFirst, String newLast, String newBirthDate) {
 
         for (String[] row : professors) {
             if (row[0].equals(username)) {
                 row[4] = newFirst;
                 row[5] = newLast;
+                row[6] = newBirthDate;
                 updateProfessorCSV();
                 updateUserCSV();
                 System.out.println("Profesor actualizado.");
@@ -156,43 +157,38 @@ public class ProfessorManager {
         }
     }
     public static void updateUserCSV() {
-        try {
-            // Leer todos los usuarios actuales
+         try {
             List<String[]> allUsers = new ArrayList<>();
-            
+
             try (CSVReader reader = new CSVReader(new FileReader(USER_FILE_PATH))) {
                 allUsers = reader.readAll();
+            } catch (Exception e) {
+                allUsers = new ArrayList<>();
             }
-            
-            // Actualizar solo los profesores
+
+            // 1. Eliminar todos los profesores existentes
+            List<String[]> usersToKeep = new ArrayList<>();
+            for (String[] user : allUsers) {
+                if (user.length >= 3 && !user[2].equals("professor")) {
+                    usersToKeep.add(user); // Mantener solo no-profesores
+                }
+            }
+
+            // 2. Agregar solo los profesores actuales
             for (String[] professor : professors) {
-                boolean found = false;
-                
-                for (int i = 0; i < allUsers.size(); i++) {
-                    if (allUsers.get(i)[0].equals(professor[0])) {
-                        // Actualizar user, password, role
-                        allUsers.set(i, new String[]{professor[0], professor[1], professor[2]});
-                        found = true;
-                        break;
-                    }
-                }
-                
-                // Si no existe, agregarlo
-                if (!found) {
-                    allUsers.add(new String[]{professor[0], professor[1], professor[2]});
-                }
+                usersToKeep.add(new String[]{professor[0], professor[1], professor[2]});
             }
-            
-            // Escribir todo de vuelta
+
+            // 3. Escribir
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(USER_FILE_PATH))) {
-                for (String[] user : allUsers) {
+                for (String[] user : usersToKeep) {
                     writer.write(user[0] + "," + user[1] + "," + user[2]);
                     writer.newLine();
                 }
             }
-            
+
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error actualizando usuarios CSV: " + e.getMessage());
         }
     }
     

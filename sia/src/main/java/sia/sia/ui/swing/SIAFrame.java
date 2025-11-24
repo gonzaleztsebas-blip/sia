@@ -34,7 +34,7 @@ public class SIAFrame extends JFrame{
         
         add(mainPanel);
         
-        cardLayout.show(mainPanel, "LOGIN");
+        cardLayout.show(mainPanel, "ADMIN_DASHBOARD");
     }
     
     public void showCard(String cardName) {

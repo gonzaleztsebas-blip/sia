@@ -97,7 +97,7 @@ public class ProfessorManagementMenu {
         System.out.print("Nuevo apellido: ");
         String newLastName = scan.nextLine().trim();
 
-        ProfessorManager.updateProfessor(username, newFirstName, newLastName);
+        ProfessorManager.updateProfessor(username, newFirstName, newLastName, "");
     }
 
     private static void findProfessor(Scanner scan) {

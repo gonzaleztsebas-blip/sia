@@ -80,6 +80,11 @@ public class AdminDashboardPanel extends JPanel {
         add(contentPanel, BorderLayout.CENTER);
         
         contentPanel.add(new StudentManagementPanel(), "Gestión Estudiantes");
+        contentPanel.add(new ProfessorManagementPanel(), "Gestión Profesores");
+        contentPanel.add(new CourseManagementPanel(), "Gestión Cursos");
+        contentPanel.add(new GroupManagementPanel(), "Gestión Grupos");
+        contentPanel.add(new EnrollmentManagementPanel(), "Gestión Inscripciones");
+        contentPanel.add(new GradeManagementPanel(), "Gestión Calificaciones");
     }
     
     private void showContent(String menuItem) {
