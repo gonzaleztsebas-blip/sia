@@ -14,7 +14,7 @@ public class TestLogin {
         // Ejecutar en el hilo de Swing
         SwingUtilities.invokeLater(() -> {
             SIAFrame frame = new SIAFrame();
-            frame.setVisible(true); // ¡Esto te falta en SIAFrame!
+            frame.setVisible(true);
         });
     }
 }

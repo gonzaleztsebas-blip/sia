@@ -39,13 +39,13 @@ public class QuickStartGuide {
         CSVManager.signUp("admin", "admin123", "admin");
         
         // Profesores
-        CSVManager.signUp("prof_garcia", "prof123", "professor");
-        CSVManager.signUp("prof_rodriguez", "prof123", "professor");
+        ProfessorManager.createProfessor("prof_garcia", "prof123", "Ana", "Garcia", "1980-04-15");
+        ProfessorManager.createProfessor("prof_rodriguez", "prof123", "Carlos", "Rodriguez", "1975-11-22");
         
         // Estudiantes
-        CSVManager.signUp("juan_perez", "student123", "student");
-        CSVManager.signUp("maria_lopez", "student123", "student");
-        CSVManager.signUp("carlos_gomez", "student123", "student");
+        StudentManager.createStudent("juan_perez", "student123", "Juan", "Perez", "2000-05-15");
+        StudentManager.createStudent("maria_lopez", "student123", "Maria", "Lopez", "2001-03-20");
+        StudentManager.createStudent("carlos_gomez", "student123", "Carlos", "Gomez", "2002-08-10");
         
         System.out.println("   Usuarios creados correctamente.\n");
 
@@ -106,7 +106,6 @@ public class QuickStartGuide {
             GroupManager.assignProfessor(groups.get(2)[0], "prof_rodriguez");
             GroupManager.assignProfessor(groups.get(3)[0], "prof_rodriguez");
         }
-        
         System.out.println("   Profesores asignados correctamente.\n");
 
         // ==========================================

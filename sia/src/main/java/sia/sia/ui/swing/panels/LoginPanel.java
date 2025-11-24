@@ -23,7 +23,6 @@ public class LoginPanel extends JPanel{
     private JTextField txtUser;
     private JPasswordField pswPassword;
     private JButton btnEnter;
-    private JButton btnRegist;
     
     public LoginPanel(SIAFrame parent){
         parentFrame = parent;
@@ -91,24 +90,15 @@ public class LoginPanel extends JPanel{
         footerPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0)); 
         footerPanel.setOpaque(false); // opcional, para que se vea más limpio
 
-        JLabel lblCuenta = new JLabel("¿No tienes cuenta?");
+        JLabel lblCuenta = new JLabel("Contacte al administrador para crear una nueva cuenta");
         lblCuenta.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        btnRegist = new JButton("Regístrate");
-        btnRegist.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         footerPanel.add(lblCuenta);
-        footerPanel.add(Box.createVerticalStrut(5)); // espacio pequeño
-        footerPanel.add(btnRegist);
-        footerPanel.add(Box.createVerticalStrut(15)); // empuja hacia arriba
+        footerPanel.add(Box.createVerticalStrut(25)); // espacio pequeño
     }
     
     private void addActionListeners(){
         btnEnter.addActionListener( e -> login());
-        
-        btnRegist.addActionListener(e -> {
-            parentFrame.showCard("REGISTER");
-        });
     }
     
     private void login(){

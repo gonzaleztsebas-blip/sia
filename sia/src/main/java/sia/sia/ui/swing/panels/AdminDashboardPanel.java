@@ -78,13 +78,12 @@ public class AdminDashboardPanel extends JPanel {
         contentPanel.add(welcomePanel, "WELCOME");
         
         add(contentPanel, BorderLayout.CENTER);
+        
+        contentPanel.add(new StudentManagementPanel(), "Gestión Estudiantes");
     }
     
     private void showContent(String menuItem) {
-        // Por ahora solo muestra un mensaje
-        JPanel tempPanel = new JPanel(new BorderLayout());
-        tempPanel.add(new JLabel(menuItem + " - En construcción", JLabel.CENTER));
-        contentPanel.add(tempPanel, menuItem);
+        // En lugar de crear un panel temporal, mostrar el que ya está registrado
         cardLayout.show(contentPanel, menuItem);
     }
 }

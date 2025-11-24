@@ -28,7 +28,6 @@ public class SIAFrame extends JFrame{
         mainPanel = new JPanel(cardLayout);
         
         mainPanel.add(new LoginPanel(this), "LOGIN");
-        mainPanel.add(new RegisterPanel(this), "REGISTER");
         mainPanel.add(new AdminDashboardPanel(this), "ADMIN_DASHBOARD");
         mainPanel.add(new StudentDashboardPanel(this), "STUDENT_DASHBOARD");
         mainPanel.add(new ProfessorDashboardPanel(this), "PROFESSOR_DASHBOARD");
