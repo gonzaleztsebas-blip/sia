@@ -5,10 +5,9 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import sia.sia.data.Student;
-import sia.sia.data.CodeNumbersManager;
+import sia.sia.business.CodeNumbersManager;
 
 public class StudentManager {
     
@@ -25,7 +24,6 @@ public class StudentManager {
             reader.close();
             return rows != null ? rows : new ArrayList<>();
         } catch (Exception e) {
-            System.out.println("No se pudieron cargar estudiantes: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -37,7 +35,7 @@ public class StudentManager {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(STUDENT_FILE_PATH))) {
             writer.write(""); // Archivo vacío
         } catch (Exception e) {
-            System.out.println("No se pudo limpiar archivo: " + e.getMessage());
+            // Ignore
         }
     }
 
@@ -50,15 +48,11 @@ public class StudentManager {
 
         Student existing = findStudent(user);
         if (existing != null) {
-            System.out.println("Error: Ese usuario ya existe.");
             return;
         }
 
         CodeNumbersManager idManager = new CodeNumbersManager();
         long id = idManager.createNewId();
-
-        // Crear estudiante - Asegurar que el constructor coincida
-        Student s = new Student(user, password, id, firstName, lastName, birthDate);
 
         // Convertir a fila CSV - formato: [user, password, "student", id, firstName, lastName, birthDate, ""]
         String[] studentRow = new String[]{
@@ -75,8 +69,6 @@ public class StudentManager {
         students.add(studentRow);
         updateStudentCSV();
         updateUserCSV();
-        
-        System.out.println("Estudiante " + user + " creado correctamente.");
     }
 
     public static void deleteStudent(String user) {
@@ -89,14 +81,12 @@ public class StudentManager {
         }
 
         if (index == -1) {
-            System.out.println("No existe el estudiante.");
             return;
         }
 
         students.remove(index);
         updateStudentCSV();
         updateUserCSV();
-        System.out.println("Estudiante eliminado correctamente.");
     }
 
     public static void listStudents() {
@@ -121,7 +111,6 @@ public class StudentManager {
                             row[6]      // birthDate
                     );
                 } catch (Exception e) {
-                    System.out.println("Error parseando estudiante: " + e.getMessage());
                     return null;
                 }
             }
@@ -130,13 +119,8 @@ public class StudentManager {
     }
     
     public static void printFindStudent(String username) {
-        Student student = findStudent(username);
-        if (student != null) {
-            System.out.println("Estudiante encontrado correctamente.");
-            System.out.println(Arrays.toString(student.toArray())); 
-        } else {
-            System.out.println("Estudiante no encontrado: " + username);
-        }
+        findStudent(username);
+        // Method now silent
     }
 
     public static void updateStudent(String username, String newFirst, String newLast, String newBirthDate) {
@@ -155,9 +139,6 @@ public class StudentManager {
         if (updated) {
             updateStudentCSV();
             updateUserCSV();
-            System.out.println("Estudiante actualizado.");
-        } else {
-            System.out.println("No existe el estudiante.");
         }
     }
 
@@ -168,7 +149,7 @@ public class StudentManager {
                 writer.newLine();
             }
         } catch (Exception e) {
-            System.out.println("Error actualizando estudiantes CSV: " + e.getMessage());
+            // Error updating students CSV
         }
     }
     
@@ -205,7 +186,7 @@ public class StudentManager {
             }
 
         } catch (Exception e) {
-            System.out.println("Error actualizando usuarios CSV: " + e.getMessage());
+            // Error updating users CSV
         }
     }
 

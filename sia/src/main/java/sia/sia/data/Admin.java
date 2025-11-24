@@ -68,21 +68,9 @@ public class Admin extends User {
         return array;
     }
     
-    private void setPersonUser(User person, String newUser) {
-        person.setUser(newUser);
-    }
-
-    private void setPersonPassword(User person, String newPassword) {
-        person.setPassword(newPassword);
-    }
-
-    private void setPersonRole(User person, String newRole) {
-        person.setRole(newRole);
-    }
-    
     @Override
     public void menu() {
-        sia.sia.ui.AdminMenu.show();
+        // Swing interface is now handled by SIAFrame
     }
     
     

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package sia.sia.ui.swing.panels;
+package sia.sia.ui.panels.admin;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,25 +53,6 @@ public class CourseManagementPanel extends JPanel {
         btnRefresh.addActionListener(e -> loadCourseData());
     }
     
-    private String convertRequisitesToNames(String requisitesStr) {
-        if (requisitesStr == null || requisitesStr.isEmpty() || requisitesStr.equals("[]")) {
-            return "Ninguno";
-        }
-        
-        List<String> names = new ArrayList<>();
-        String[] requisites = requisitesStr.replace("[", "").replace("]", "").split(";");
-        
-        for (String requisiteCode : requisites) {
-            String code = requisiteCode.trim();
-            if (!code.isEmpty()) {
-                String name = getCourseNameByCode(code);
-                names.add(name != null ? name : code);
-            }
-        }
-        
-        return names.isEmpty() ? "Ninguno" : String.join(", ", names);
-    }
-    
     private String getCourseNameByCode(String courseCode) {
         List<String[]> courses = CourseManager.getCourses();
         for (String[] course : courses) {
@@ -90,18 +71,6 @@ public class CourseManagementPanel extends JPanel {
             }
         }
         return null;
-    }
-    
-    private void loadCoursesToComboBox(JComboBox<String> combo) {
-        combo.removeAllItems();
-        combo.addItem("Ninguno"); // Opción por defecto
-        
-        List<String[]> courses = CourseManager.getCourses();
-        for (String[] course : courses) {
-            if (course.length >= 2) {
-                combo.addItem(course[1]); // Agregar nombre del curso
-            }
-        }
     }
     
     private void showAddCourseDialog() {
@@ -373,13 +342,6 @@ public class CourseManagementPanel extends JPanel {
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
 }
-    
-    private String getRequisiteNameFromDisplay(String requisitesDisplay) {
-        if (requisitesDisplay.equals("Ninguno")) return "Ninguno";
-        // Tomar el primer nombre de la lista
-        String[] names = requisitesDisplay.split(", ");
-        return names.length > 0 ? names[0] : "Ninguno";
-    }
     
     private void deleteSelectedCourse() {
         int selectedRow = courseTable.getSelectedRow();

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import sia.sia.data.Course;
-import sia.sia.data.CodeNumbersManager;
+import sia.sia.business.CodeNumbersManager;
 
 /**
  *

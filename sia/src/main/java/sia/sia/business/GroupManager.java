@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import sia.sia.data.CodeNumbersManager;
+import sia.sia.business.CodeNumbersManager;
 import sia.sia.data.Group;
 import sia.sia.data.Course;
 import sia.sia.data.Professor;
@@ -41,7 +41,7 @@ public class GroupManager {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(GROUP_FILE_PATH))) {
             writer.write(""); // Archivo vacío
         } catch (Exception e) {
-            System.out.println("No se pudo limpiar archivo de grupos: " + e.getMessage());
+            // Ignore
         }
     }
 
@@ -53,7 +53,6 @@ public class GroupManager {
 
         Course course = CourseManager.findCourse(Long.parseLong(courseId));
         if (course == null) {
-            System.out.println("El curso no existe.");
             return;
         }
 
@@ -74,20 +73,17 @@ public class GroupManager {
 
         groups.add(newGroup.toArray());
         updateGroupCSV();
-        System.out.println("Grupo creado correctamente con numero: " + groupNumber);
     }
 
     public static void createGroup(String number, String[] daysOfWeek, String[] timesOfDay,
             String semester, String courseId) {
 
         if (findGroup(number) != null) {
-            System.out.println("Error: el grupo ya existe.");
             return;
         }
 
         Course course = CourseManager.findCourse(courseId);
         if (course == null) {
-            System.out.println("El curso no existe.");
             return;
         }
 
@@ -104,7 +100,6 @@ public class GroupManager {
 
         groups.add(newGroup.toArray());
         updateGroupCSV();
-        System.out.println("Grupo creado correctamente.");
     }
 
     public static void deleteGroup(String number) {
@@ -113,12 +108,11 @@ public class GroupManager {
             if (groups.get(i)[0].equals(number)) {
                 groups.remove(i);
                 updateGroupCSV();
-                System.out.println("Grupo eliminado correctamente.");
                 return;
             }
         }
 
-        System.out.println("No existe el grupo.");
+        // Group not found
     }
 
     public static Group findGroup(String number) {
@@ -131,7 +125,7 @@ public class GroupManager {
 
                 Course course = CourseManager.findCourse(Long.parseLong(row[4]));
                 if (course == null) {
-                    System.out.println("Advertencia: Curso no encontrado para grupo " + number);
+                    // Course not found for group
                 }
 
                 // Profesor
@@ -191,12 +185,11 @@ public class GroupManager {
             if (row[0].equals(number)) {
                 row[3] = newSemester;
                 updateGroupCSV();
-                System.out.println("Semestre actualizado.");
                 return;
             }
         }
 
-        System.out.println("Grupo no encontrado.");
+        // Group not found
     }
 
     public static void updateSchedule(String number, String[] newDays, String[] newHours) {
@@ -208,19 +201,17 @@ public class GroupManager {
                 row[2] = String.join(";", newHours);
 
                 updateGroupCSV();
-                System.out.println("Horario actualizado.");
                 return;
             }
         }
 
-        System.out.println("Grupo no encontrado.");
+        // Group not found
     }
 
     public static void updateCourseOfGroup(String number, String newCourseId) {
 
         Course c = CourseManager.findCourse(newCourseId);
         if (c == null) {
-            System.out.println("El curso no existe.");
             return;
         }
 
@@ -228,12 +219,11 @@ public class GroupManager {
             if (row[0].equals(number)) {
                 row[4] = newCourseId;
                 updateGroupCSV();
-                System.out.println("Curso actualizado.");
                 return;
             }
         }
 
-        System.out.println("Grupo no encontrado.");
+        // Group not found
     }
 
     // ============================================================
@@ -243,7 +233,6 @@ public class GroupManager {
 
         Professor p = ProfessorManager.findProfessor(professorUsername);
         if (p == null) {
-            System.out.println("Profesor no existe.");
             return;
         }
 

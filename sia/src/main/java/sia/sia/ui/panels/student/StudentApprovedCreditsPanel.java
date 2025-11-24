@@ -1,0 +1,59 @@
+package sia.sia.ui.panels.student;
+
+import sia.sia.business.EnrollmentManager;
+import sia.sia.data.Group;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
+
+public class StudentApprovedCreditsPanel extends JPanel {
+    private String currentUser;
+    
+    public StudentApprovedCreditsPanel(String currentUser) {
+        this.currentUser = currentUser;
+        initComponents();
+    }
+    
+    private void initComponents() {
+        setLayout(new BorderLayout());
+        setBorder(BorderFactory.createTitledBorder("Créditos Aprobados"));
+        
+        JButton refreshBtn = new JButton("Actualizar");
+        
+        DefaultTableModel model = new DefaultTableModel(
+            new String[]{"Materia", "Créditos", "Calificación", "Estado"}, 0
+        );
+        JTable table = new JTable(model);
+        JScrollPane scrollPane = new JScrollPane(table);
+        
+        refreshBtn.addActionListener(e -> loadApprovedCredits(model));
+        
+        add(refreshBtn, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
+        
+        loadApprovedCredits(model);
+    }
+    
+    private void loadApprovedCredits(DefaultTableModel model) {
+        model.setRowCount(0);
+        
+        List<Group> enrollments = EnrollmentManager.getCurrentEnrollments(currentUser);
+        int totalCredits = 0;
+        
+        for (Group group : enrollments) {
+            int groupCredits = group.getRepresents().getCredits();
+            totalCredits += groupCredits;
+            
+            model.addRow(new Object[]{
+                group.getRepresents().getName(),
+                groupCredits,
+                "--",
+                "Aprobado"
+            });
+        }
+        
+        JLabel totalLabel = new JLabel("Total Créditos: " + totalCredits);
+        totalLabel.setFont(new Font("Arial", Font.BOLD, 14));
+    }
+}

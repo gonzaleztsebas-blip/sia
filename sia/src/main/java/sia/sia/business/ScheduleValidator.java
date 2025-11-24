@@ -5,7 +5,6 @@
 package sia.sia.business;
 
 import sia.sia.data.Group;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +34,6 @@ public class ScheduleValidator {
 
         // Validación de seguridad
         if (newDays == null || newTimes == null || newDays.length == 0 || newTimes.length == 0) {
-            System.out.println("El grupo no tiene horario definido.");
             return false;
         }
 
@@ -51,9 +49,6 @@ public class ScheduleValidator {
 
             // Verificar si hay cruce
             if (hasConflictBetweenGroups(newDays, newTimes, existingDays, existingTimes)) {
-                System.out.println("Cruce de horario detectado con el curso: " 
-                    + existingGroup.getRepresents().getName() 
-                    + " (Grupo " + existingGroup.getNumber() + ")");
                 return true;
             }
         }
@@ -116,8 +111,6 @@ public class ScheduleValidator {
             }
 
             if (hasTimeRangeConflict(newDays, newTimes, existingDays, existingTimes)) {
-                System.out.println("Cruce de horario con: " 
-                    + existingGroup.getRepresents().getName());
                 return true;
             }
         }
@@ -226,8 +219,6 @@ public class ScheduleValidator {
             newSchedule.retainAll(existingSchedule);
             
             if (!newSchedule.isEmpty()) {
-                System.out.println("Cruce de horario con: " 
-                    + existing.getRepresents().getName());
                 return true;
             }
         }

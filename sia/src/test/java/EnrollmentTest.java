@@ -10,8 +10,7 @@ import sia.sia.data.Group;
 public class EnrollmentTest {
 
     private static String grupoBasico;
-    private static String grupoIntermedio; 
-    private static String grupoAvanzado;
+    private static String grupoIntermedio;
 
     @BeforeAll
     static void setupTestData() {
@@ -75,7 +74,6 @@ public class EnrollmentTest {
         if (groups.size() >= 3) {
             grupoBasico = groups.get(0)[0];
             grupoIntermedio = groups.get(1)[0];
-            grupoAvanzado = groups.get(2)[0];
         }
 
         // Asignar profesor

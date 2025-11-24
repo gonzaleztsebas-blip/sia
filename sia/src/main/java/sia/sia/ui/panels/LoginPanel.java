@@ -2,8 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package sia.sia.ui.swing.panels;
-import sia.sia.ui.swing.*;
+package sia.sia.ui.panels;
+import sia.sia.ui.*;
 import java.awt.*;
 import javax.swing.*;
 import sia.sia.business.CSVManager;
@@ -113,10 +113,13 @@ public class LoginPanel extends JPanel{
                 JOptionPane.showMessageDialog(this, "Login exitoso!\nBienvenido: " + username, "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
                 switch(currentUser.getRole().toLowerCase()) {
-                    case "admin": parentFrame.showCard("ADMIN_DASHBOARD"); break;
-                    case "student": parentFrame.showCard("STUDENT_DASHBOARD"); break;
-                    case "professor": parentFrame.showCard("PROFESSOR_DASHBOARD"); break;
+                    case "admin": parentFrame.showCard("ADMIN_DASHBOARD", username); break;
+                    case "student": parentFrame.showCard("STUDENT_DASHBOARD", username); break;
+                    case "professor": parentFrame.showCard("PROFESSOR_DASHBOARD", username); break;
                 }
+                
+                txtUser.setText("");
+                pswPassword.setText("");
             } else {
                 JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
             }

@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package sia.sia.ui.swing.panels;
+package sia.sia.ui.panels;
 
-import sia.sia.ui.swing.SIAFrame;
+import sia.sia.ui.SIAFrame;
+import sia.sia.ui.panels.student.*;
 import javax.swing.*;
 import java.awt.*;
 
@@ -12,10 +13,23 @@ public class StudentDashboardPanel extends JPanel {
     private SIAFrame parentFrame;
     private CardLayout cardLayout;
     private JPanel contentPanel;
+    private String currentUser;
     
     public StudentDashboardPanel(SIAFrame parent) {
         this.parentFrame = parent;
+        this.currentUser = "";
         initComponents();
+    }
+    
+    public void setCurrentUser(String username) {
+        this.currentUser = username;
+        // Recreate content panels with the new user
+        if (contentPanel != null) {
+            contentPanel.removeAll();
+            initContentArea();
+            contentPanel.revalidate();
+            contentPanel.repaint();
+        }
     }
     
     private void initComponents() {
@@ -40,26 +54,24 @@ public class StudentDashboardPanel extends JPanel {
     }
     
     private void initSidebar() {
-        JPanel sidebarPanel = new JPanel(new GridLayout(6, 1, 5, 5));
+        JPanel sidebarPanel = new JPanel(new GridLayout(8, 1, 5, 5));
         sidebarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         String[] menuItems = {
             "Historial Académico",
-            "Inscripción Materias",
-            "Mi Horario",
-            "Mis Calificaciones", 
+            "Inscripciones Actuales",
+            "Inscribir Materia",
+            "Retirar Materia",
             "Cursos Disponibles",
-            "" // Espaciador
+            "Mi Horario",
+            "Promedio General",
+            "Créditos Aprobados"
         };
         
         for (String item : menuItems) {
-            if (item.isEmpty()) {
-                sidebarPanel.add(new JLabel());
-            } else {
-                JButton button = new JButton(item);
-                button.addActionListener(e -> showContent(item));
-                sidebarPanel.add(button);
-            }
+            JButton button = new JButton(item);
+            button.addActionListener(e -> showContent(item));
+            sidebarPanel.add(button);
         }
         
         add(sidebarPanel, BorderLayout.WEST);
@@ -70,16 +82,22 @@ public class StudentDashboardPanel extends JPanel {
         contentPanel = new JPanel(cardLayout);
         
         JPanel welcomePanel = new JPanel(new BorderLayout());
-        welcomePanel.add(new JLabel("Bienvenido Estudiante", JLabel.CENTER));
+        welcomePanel.add(new JLabel("Seleccione una opción del menú", JLabel.CENTER));
         contentPanel.add(welcomePanel, "WELCOME");
+        
+        contentPanel.add(new StudentAcademicHistoryPanel(currentUser), "Historial Académico");
+        contentPanel.add(new StudentCurrentEnrollmentsPanel(currentUser), "Inscripciones Actuales");
+        contentPanel.add(new StudentEnrollCoursePanel(currentUser), "Inscribir Materia");
+        contentPanel.add(new StudentWithdrawCoursePanel(currentUser), "Retirar Materia");
+        contentPanel.add(new StudentAvailableCoursesPanel(currentUser), "Cursos Disponibles");
+        contentPanel.add(new StudentSchedulePanel(currentUser), "Mi Horario");
+        contentPanel.add(new StudentGradeAveragePanel(currentUser), "Promedio General");
+        contentPanel.add(new StudentApprovedCreditsPanel(currentUser), "Créditos Aprobados");
         
         add(contentPanel, BorderLayout.CENTER);
     }
     
     private void showContent(String menuItem) {
-        JPanel tempPanel = new JPanel(new BorderLayout());
-        tempPanel.add(new JLabel(menuItem + " - En construcción", JLabel.CENTER));
-        contentPanel.add(tempPanel, menuItem);
         cardLayout.show(contentPanel, menuItem);
     }
 }

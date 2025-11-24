@@ -9,10 +9,9 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import sia.sia.data.Professor;
-import sia.sia.data.CodeNumbersManager;
+import sia.sia.business.CodeNumbersManager;
 
 public class ProfessorManager {
     
@@ -41,7 +40,7 @@ public class ProfessorManager {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(PROFESSOR_FILE_PATH))) {
             writer.write(""); // Archivo vacío
         } catch (Exception e) {
-            System.out.println("No se pudo limpiar archivo: " + e.getMessage());
+            // Ignore
         }
     }
     
@@ -54,7 +53,6 @@ public class ProfessorManager {
 
         Professor existing = findProfessor(user);
         if (existing != null) {
-            System.out.println("Error: Ese usuario ya existe.");
             return;
         }
 
@@ -69,8 +67,6 @@ public class ProfessorManager {
 
         updateProfessorCSV();
         updateUserCSV();
-        
-        System.out.println("Profesor creado correctamente.");
     }
 
     public static void deleteProfessor(String user) {
@@ -85,15 +81,12 @@ public class ProfessorManager {
         }
 
         if (index == -1) {
-            System.out.println("No existe el profesor.");
             return;
         }
 
         professors.remove(index);
         updateProfessorCSV();
         updateUserCSV();
-
-        System.out.println("Profesor eliminado correctamente.");
     }
 
     public static void listProfessors() {
@@ -122,9 +115,7 @@ public class ProfessorManager {
     }
     
     public static void printFindProfessor(String username) {
-        
-        System.out.println("Profesor encontrado correctamente.");
-        System.out.println(Arrays.toString(findProfessor(username).toArray())); 
+        findProfessor(username);
     }
 
     public static void updateProfessor(String username, String newFirst, String newLast, String newBirthDate) {
@@ -136,12 +127,11 @@ public class ProfessorManager {
                 row[6] = newBirthDate;
                 updateProfessorCSV();
                 updateUserCSV();
-                System.out.println("Profesor actualizado.");
                 return;
             }
         }
 
-        System.out.println("No existe el profesor.");
+        // Professor not found
     }
 
     public static void updateProfessorCSV() {
@@ -188,7 +178,7 @@ public class ProfessorManager {
             }
 
         } catch (Exception e) {
-            System.out.println("Error actualizando usuarios CSV: " + e.getMessage());
+            // Error updating users CSV
         }
     }
     
