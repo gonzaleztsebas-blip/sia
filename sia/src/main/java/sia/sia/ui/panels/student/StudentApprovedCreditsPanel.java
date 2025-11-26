@@ -48,7 +48,11 @@ public class StudentApprovedCreditsPanel extends JPanel {
         int totalCredits = 0;
         
         for (Group group : enrollments) {
-            int groupCredits = group.getRepresents().getCredits();
+            int[] creditsArray = group.getRepresents().getCredits();
+            int groupCredits = 0;
+            for (int c : creditsArray) {
+                groupCredits += c;
+            }
             totalCredits += groupCredits;
             
             model.addRow(new Object[]{

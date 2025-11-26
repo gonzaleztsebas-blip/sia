@@ -82,8 +82,4 @@ public class Professor extends User {
         return array;
     }
     
-    @Override
-    public void menu() {
-        System.out.println("Menú Admin: gestionar usuarios, reportes, etc.");
-    }
 }

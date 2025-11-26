@@ -160,5 +160,4 @@ public abstract class User {
         return array;
     }
     
-    public abstract void menu();
 }

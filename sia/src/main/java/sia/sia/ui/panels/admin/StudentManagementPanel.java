@@ -7,6 +7,7 @@ package sia.sia.ui.panels.admin;
 import javax.swing.*;
 import java.awt.*;
 import sia.sia.business.StudentManager;
+import sia.sia.data.Student;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
@@ -157,7 +158,11 @@ public class StudentManagementPanel extends JPanel {
                 return;
             }
 
-            StudentManager.updateStudent(username, newFirstName, newLastName, newBirthDate);
+            // Obtener contraseña existente del estudiante
+            Student student = StudentManager.findStudent(username);
+            String password = student != null ? student.getPassword() : "";
+
+            StudentManager.updateStudent(username, password, newFirstName, newLastName, newBirthDate);
 
             // DEBUG: Verificar cambios inmediatamente
             StudentManager.reload(); // Forzar recarga

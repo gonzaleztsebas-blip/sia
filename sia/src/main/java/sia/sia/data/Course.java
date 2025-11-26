@@ -5,6 +5,7 @@
 package sia.sia.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -15,27 +16,58 @@ import java.util.stream.Collectors;
  */
 public class Course {
 
+    public static final int FUNDAMENTACION = 0;
+    public static final int DISCIPLINAR = 1;
+    public static final int LIBRE_ELECCION = 2;
+    public static final int NIVELACION = 3;
+
     private long code;
     private String name;
-    private int credits;
+    private int[] credits = new int[4];
+    //credits[Fundamentacion,disciplinar,libre eleccion,nivelacion]
+
     private List<String> requisites;
     private List<Group> offeredAs;
 
-    public Course(String name, int credits) {
+    // Agregar este constructor a la clase Course
+    public Course(String[] data) {
+        this.code = Long.parseLong(data[0]);
+        this.name = data[1];
+
+        // Parsear créditos desde string "4,0,0,0"
+        String[] creditsParts = data[2].split(",");
+        this.credits = new int[4];
+
+        // Asegurar que siempre tengas 4 elementos
+        for (int i = 0; i < 4 && i < creditsParts.length; i++) {
+            this.credits[i] = Integer.parseInt(creditsParts[i].trim());
+        }
+        // Si creditsParts tiene menos de 4 elementos, los demás quedan en 0
+
+        // Parsear requisitos
+        String reqStr = data[3].replace("[", "").replace("]", "").trim();
+        if (reqStr.isEmpty()) {
+            this.requisites = new ArrayList<>();
+        } else {
+            this.requisites = new ArrayList<>(Arrays.asList(reqStr.split(";")));
+        }
+
+        this.offeredAs = new ArrayList<>(); // Inicializar vacío
+    }
+
+    public Course(String name, int[] credits) {
+        if (credits.length != 4) {
+            throw new IllegalArgumentException("Credits array must have exactly 4 elements");
+        }
         this.name = name;
         this.credits = credits;
     }
 
-    public Course(long code, String name, int credits, List<String> requisites) {
+    public Course(long code, String name, int[] credits, List<String> requisites) {
+        if (credits.length != 4) {
+            throw new IllegalArgumentException("Credits array must have exactly 4 elements");
+        }
         this.name = name;
-        this.code = code;
-        this.credits = credits;
-        this.requisites = new ArrayList<>(requisites);
-    }
-
-    public Course(long code, String name, int credits, List<String> requisites, List<Group> offeredAs) {
-        this.name = name;
-        this.offeredAs = offeredAs;
         this.code = code;
         this.credits = credits;
         this.requisites = new ArrayList<>(requisites);
@@ -66,7 +98,7 @@ public class Course {
         return "" + code;
     }
 
-    public int getCredits() {
+    public int[] getCredits() {
         return credits;
     }
 
@@ -86,7 +118,7 @@ public class Course {
         this.code = code;
     }
 
-    public void setCredits(int credits) {
+    public void setCredits(int[] credits) {
         this.credits = credits;
     }
 
@@ -100,12 +132,12 @@ public class Course {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = (int) (59 * hash + this.code);
-        hash = 59 * hash + Objects.hashCode(this.name);
-        hash = 59 * hash + Objects.hashCode(this.offeredAs);
-        hash = 59 * hash + this.credits;
-        hash = 59 * hash + Objects.hashCode(this.requisites);
+        int hash = 3;
+        hash = 13 * hash + (int) (this.code ^ (this.code >>> 32));
+        hash = 13 * hash + Objects.hashCode(this.name);
+        hash = 13 * hash + Arrays.hashCode(this.credits);
+        hash = 13 * hash + Objects.hashCode(this.requisites);
+        hash = 13 * hash + Objects.hashCode(this.offeredAs);
         return hash;
     }
 
@@ -141,16 +173,22 @@ public class Course {
         return "Course{" + "code=" + code
                 + ", name=" + name
                 + ", offeredAs=" + offeredAs
-                + ", credits=" + credits
+                + ", credits=" + Arrays.toString(credits)
                 + ", requisites=" + requisites
                 + '}';
     }
 
     public String[] toArray() {
+        // Convertir array de créditos a formato string
+        String creditsStr = Arrays.stream(credits)
+                .mapToObj(String::valueOf)
+                .collect(Collectors.joining(","));
+
         return new String[]{
             String.valueOf(code),
             name,
-            String.valueOf(credits),
-            "[" + String.join(";", requisites) + "]"};
+            creditsStr, // Ej: "4,0,0,0"
+            "[" + String.join(";", requisites) + "]"
+        };
     }
 }

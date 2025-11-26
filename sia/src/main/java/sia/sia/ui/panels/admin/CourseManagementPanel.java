@@ -144,6 +144,7 @@ public class CourseManagementPanel extends JPanel {
 
         try {
             int credits = Integer.parseInt(creditsStr);
+            int[] creditsArray = new int[] {credits, 0, 0, 0}; // Fundamentacion, Disciplinar, LibreEleccion, Nivelacion
             List<String> requisitesList = new ArrayList<>();
 
             // DEBUG: Ver qué se está guardando
@@ -161,7 +162,7 @@ public class CourseManagementPanel extends JPanel {
             }
             System.out.println("Lista final: " + requisitesList);
 
-            CourseManager.createCourse(name, credits, requisitesList);
+            CourseManager.createCourse(name, creditsArray, requisitesList);
             JOptionPane.showMessageDialog(dialog, "Curso creado correctamente");
             dialog.dispose();
             loadCourseData();
@@ -316,6 +317,7 @@ public class CourseManagementPanel extends JPanel {
 
         try {
             int newCredits = Integer.parseInt(newCreditsStr);
+            int[] newCreditsArray = new int[] {newCredits, 0, 0, 0}; // Fundamentacion, Disciplinar, LibreEleccion, Nivelacion
             List<String> newRequisitesList = new ArrayList<>();
 
             // Obtener cursos seleccionados
@@ -328,7 +330,7 @@ public class CourseManagementPanel extends JPanel {
                 }
             }
 
-            CourseManager.updateCourse(Long.parseLong(code), newName, newCredits, newRequisitesList);
+            CourseManager.updateCourse(Long.parseLong(code), newName, newCreditsArray, newRequisitesList);
             JOptionPane.showMessageDialog(dialog, "Curso actualizado correctamente");
             dialog.dispose();
             loadCourseData();

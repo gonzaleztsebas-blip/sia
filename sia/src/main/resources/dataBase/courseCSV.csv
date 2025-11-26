@@ -1,10 +1,5 @@
-90955,Calculo Diferencial,4,[]
-23017,Algebra Lineal,4,[]
-94720,Fisica I,4,[]
-15700,Programacion Basica,3,[]
-79497,Calculo Integral,4,90955
-39124,Programacion Orientada a Objetos,4,15700
-28456,Algoritmos y Estructuras de Datos,4,15700
-34521,Base de Datos,4,15700
-41235,Analisis Matematico,4,90955;23017
-52341,Logica Computacional,3,[]
+"97915","Calculo Diferencial","4,0,0,0","[]"
+"59798","Algebra Lineal","4,0,0,0","[]"
+"15395","Fisica I","2,0,0,0","[]"
+"54513","Programacion Basica","0,3,0,0","[]"
+"92810","Calculo Integral","4,0,0,0","[97915]"

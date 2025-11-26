@@ -68,10 +68,4 @@ public class Admin extends User {
         return array;
     }
     
-    @Override
-    public void menu() {
-        // Swing interface is now handled by SIAFrame
-    }
-    
-    
 }

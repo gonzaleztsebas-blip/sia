@@ -7,6 +7,7 @@ package sia.sia.ui.panels.admin;
 import javax.swing.*;
 import java.awt.*;
 import sia.sia.business.ProfessorManager;
+import sia.sia.data.Professor;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
@@ -171,7 +172,11 @@ public class ProfessorManagementPanel extends JPanel {
                 return;
             }
             
-            ProfessorManager.updateProfessor(username, newFirstName, newLastName, newBirthDate);
+            // Obtener contraseña existente del profesor
+            Professor professor = ProfessorManager.findProfessor(username);
+            String password = professor != null ? professor.getPassword() : "";
+            
+            ProfessorManager.updateProfessor(username, password, newFirstName, newLastName, newBirthDate);
             JOptionPane.showMessageDialog(dialog, "Profesor actualizado correctamente");
             dialog.dispose();
             loadProfessorData();

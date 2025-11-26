@@ -1,35 +1,29 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package sia.sia.business;
 
 import com.opencsv.CSVReader;
-import java.io.BufferedWriter;
+import com.opencsv.CSVWriter;
+
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import sia.sia.data.Course;
-import sia.sia.business.CodeNumbersManager;
 
-/**
- *
- * @author luzel
- */
+import sia.sia.data.Course;
+
 public class CourseManager {
 
-    private final static String COURSES_FILE_PATH = "src\\main\\resources\\dataBase\\courseCSV.csv";
+    private static final String COURSES_FILE_PATH
+            = "src/main/resources/dataBase/courseCSV.csv";
 
-    // Cargar una sola vez
     private static List<String[]> courses = loadCourses();
 
+    // ---------------------------------------------------------
+    // ---------------------- LOAD CSV -------------------------
+    // ---------------------------------------------------------
     private static List<String[]> loadCourses() {
-        try {
-            CSVReader reader = new CSVReader(new FileReader(COURSES_FILE_PATH));
+        try (CSVReader reader = new CSVReader(new FileReader(COURSES_FILE_PATH))) {
             List<String[]> rows = reader.readAll();
-            reader.close();
             return rows != null ? rows : new ArrayList<>();
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,22 +31,21 @@ public class CourseManager {
         }
     }
 
-    public static void clearCache() {
-        courses = new ArrayList<>(); // Limpiar la lista en memoria
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(COURSES_FILE_PATH))) {
-            writer.write(""); // Archivo vacío
-        } catch (Exception e) {
-            System.out.println("No se pudo limpiar archivo de cursos: " + e.getMessage());
-        }
+    public static void reload() {
+        courses = loadCourses();
+        System.out.println("Cursos recargados: " + courses.size());
     }
 
     public static List<String[]> getCourses() {
         return courses;
     }
 
-    public static void createCourse(String name, int credits, List<String> requisites) {
-        Course existing = findCourse(name);
-        if (existing != null) {
+    // ---------------------------------------------------------
+    // ---------------------- CREATE ---------------------------
+    // ---------------------------------------------------------
+    public static void createCourse(String name, int[] credits, List<String> requisites) {
+
+        if (findCourse(name) != null) {
             System.out.println("Error: Ese curso ya existe.");
             return;
         }
@@ -61,149 +54,161 @@ public class CourseManager {
         long code = codeManager.createNewCode();
 
         Course course = new Course(code, name, credits, requisites);
+        String[] row = course.toArray(); // Usa el formato correcto
 
-        // Convertir a fila CSV
-        courses.add(course.toArray());
-
-        updateCourseCSV();
+        courses.add(row);
+        saveCSV();
 
         System.out.println("Curso creado correctamente.");
     }
 
-    public static void updateCourse(long code, String newName, int newCredits, List<String> newRequisites) {
+    // ---------------------------------------------------------
+    // ---------------------- UPDATE ---------------------------
+    // ---------------------------------------------------------
+    public static void updateCourse(long code, String newName,
+            int[] newCredits, List<String> newRequisites) {
+
         for (String[] row : courses) {
-            if (row[0].equals(String.valueOf(code))) {
+            if (Long.parseLong(row[0]) == code) {
+
                 row[1] = newName;
-                row[2] = "" + newCredits;
-                row[3] = String.join(", ", newRequisites);
-                updateCourseCSV();
+                row[2] = encodeCredits(newCredits);
+                row[3] = encodeRequisites(newRequisites);
+
+                saveCSV();
                 System.out.println("Curso actualizado.");
                 return;
             }
         }
 
-        System.out.println("No existe el estudiante.");
+        System.out.println("No existe el curso.");
     }
 
-    public static Course findCourse(String name) {
-        for (String[] row : courses) {
-
-            if (row.length < 4) {
-                continue;
-            }
-
-            if (row[1].equals(name)) {
-
-                String cleaned = row[3].replace("[", "").replace("]", "").trim();
-                List<String> reqs = cleaned.isBlank()
-                        ? new ArrayList<>()
-                        : Arrays.asList(cleaned.split("\\s*;\\s*"));
-
-                return new Course(
-                        Long.parseLong(row[0]),
-                        row[1],
-                        Integer.parseInt(row[2]),
-                        reqs
-                );
-            }
-        }
-        return null;
-    }
-
-    public static Course findCourse(Long code) {
-        for (String[] row : courses) {
-
-            if (row.length < 4) {
-                continue;
-            }
-            if (row[0].equals(String.valueOf(code))) {
-                String cleaned = row[3].replace("[", "").replace("]", "").trim();
-                List<String> reqs = cleaned.isBlank()
-                        ? new ArrayList<>()
-                        : Arrays.asList(cleaned.split("\\s*;\\s*"));
-
-                return new Course(
-                        Long.parseLong(row[0]),
-                        row[1],
-                        Integer.parseInt(row[2]),
-                        reqs
-                );
-            }
-        }
-        return null;
-    }
-
-    public static void listCourses() {
-        for (String[] row : courses) {
-            System.out.println(String.join(", ", row));
-        }
-    }
-
-    public static void deleteCourse(Long code) {
-
-        int index = -1;
+    // ---------------------------------------------------------
+    // ---------------------- DELETE ---------------------------
+    // ---------------------------------------------------------
+    public static void deleteCourse(long code) {
 
         for (int i = 0; i < courses.size(); i++) {
-            if (courses.get(i)[0].equals(String.valueOf(code))) {
-                index = i;
-                break;
-            }
-        }
-
-        if (index == -1) {
-            System.out.println("No existe el estudiante.");
-            return;
-        }
-
-        courses.remove(index);
-        updateCourseCSV();
-
-        System.out.println("Estudiante eliminado correctamente.");
-    }
-
-    public static void addRequisite(long code, List<String> requisiteCode) {
-        for (String[] row : courses) {
-            if (row[0].equals(String.valueOf(code))) {
-
-                List<String> updated = new ArrayList<>();
-
-                if (row[3] != null && !row[3].isBlank()) {
-                    updated.addAll(Arrays.asList(row[3].split(";")));
-                }
-
-                // Agregar los nuevos requisitos
-                updated.addAll(requisiteCode);
-
-                // Volver a unirlos con ';'
-                row[3] = String.join(";", updated);
-
-                updateCourseCSV();
-
-                System.out.println("Requisito agregado correctamente.");
+            if (Long.parseLong(courses.get(i)[0]) == code) {
+                courses.remove(i);
+                saveCSV();
+                System.out.println("Curso eliminado correctamente.");
                 return;
             }
         }
+
+        System.out.println("No existe el curso.");
     }
 
-    public static void listRequisites(String code) {
+    // ---------------------------------------------------------
+    // ------------------- FINDERS -----------------------------
+    // ---------------------------------------------------------
+    public static Course findCourse(String name) {
+        for (String[] row : courses) {
+            if (row[1].equalsIgnoreCase(name)) {
+                return new Course(row);
+            }
+        }
+        return null;
+    }
+
+    public static Course findCourse(long code) {
+        for (String[] row : courses) {
+            if (Long.parseLong(row[0]) == code) {
+                return new Course(row);
+            }
+        }
+        return null;
+    }
+
+    public static List<Course> getCoursesAsObjects() {
+        List<Course> list = new ArrayList<>();
+        for (String[] row : courses) {
+            list.add(new Course(row));
+        }
+        return list;
+    }
+
+    // ---------------------------------------------------------
+    // -------------------- REQUISITES -------------------------
+    // ---------------------------------------------------------
+    public static void addRequisite(long code, List<String> newReq) {
+
+        for (String[] row : courses) {
+            if (Long.parseLong(row[0]) == code) {
+
+                List<String> reqList = new ArrayList<>();
+
+                if (row[3] != null && !row[3].isBlank()) {
+                    reqList.addAll(Arrays.asList(row[3].split(";")));
+                }
+
+                reqList.addAll(newReq);
+
+                row[3] = encodeRequisites(reqList);
+
+                saveCSV();
+                System.out.println("Requisitos agregados.");
+                return;
+            }
+        }
+
+        System.out.println("No existe el curso.");
+    }
+
+    public static void listRequisites(long code) {
         Course c = findCourse(code);
+        if (c == null) {
+            System.out.println("Curso no encontrado.");
+            return;
+        }
         System.out.println(String.join(", ", c.getRequisites()));
     }
 
-    public static void updateCourseCSV() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(COURSES_FILE_PATH))) {
-
+    // ---------------------------------------------------------
+    // ----------------------- CSV -----------------------------
+    // ---------------------------------------------------------
+    private static void saveCSV() {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(COURSES_FILE_PATH))) {
             for (String[] row : courses) {
-                writer.write(row[0] + "," + row[1] + "," + row[2] + "," + row[3] + "");
-                writer.newLine();
+                writer.writeNext(row);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void reload() {
-        courses = loadCourses();
+    // ---------------------------------------------------------
+    // ----------------- ENCODER HELPERS -----------------------
+    // ---------------------------------------------------------
+    private static String encodeCredits(int[] arr) {
+        return arr[0] + ";" + arr[1] + ";" + arr[2] + ";" + arr[3];
+    }
+
+    private static String encodeRequisites(List<String> list) {
+        return String.join(";", list);
+    }
+
+    public static void listCourses() {
+        List<Course> courseObjects = getCoursesAsObjects();
+
+        if (courseObjects.isEmpty()) {
+            System.out.println("No hay cursos registrados.");
+            return;
+        }
+
+        System.out.println("\n=== LISTA DE CURSOS ===");
+        System.out.printf("%-10s %-30s %-15s %-15s %-15s %-15s%n",
+                "CÓDIGO", "NOMBRE", "FUNDAMENTACIÓN", "DISCIPLINAR", "LIBRE ELEC.", "NIVELACIÓN");
+        System.out.println("---------------------------------------------------------------------------------------------------");
+
+        for (Course course : courseObjects) {
+            int[] credits = course.getCredits();
+            System.out.printf("%-10d %-30s %-15d %-15d %-15d %-15d%n",
+                    course.getCode(),
+                    course.getName().length() > 28 ? course.getName().substring(0, 25) + "..." : course.getName(),
+                    credits[0], credits[1], credits[2], credits[3]);
+        }
     }
 }
