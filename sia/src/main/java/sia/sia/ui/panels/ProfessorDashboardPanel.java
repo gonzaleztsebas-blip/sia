@@ -43,14 +43,15 @@ public class ProfessorDashboardPanel extends JPanel {
     
     private void initHeader() {
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(UIColors.FORM_BACKGROUND);
+        headerPanel.setBackground(UIColors.HEADER);
         JLabel titleLabel = new JLabel("Panel del Profesor", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
         titleLabel.setForeground(UIColors.LABEL_TEXT);
         headerPanel.add(titleLabel, BorderLayout.CENTER);
         
         JButton logoutBtn = new JButton("Cerrar Sesión");
-        logoutBtn.setBackground(UIColors.BUTTON);
+        logoutBtn.setBackground(UIColors.BUTTON_PRIMARY);
+        logoutBtn.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
         logoutBtn.setForeground(Color.WHITE);
         logoutBtn.setFont(new Font("Arial", Font.BOLD, 11));
         logoutBtn.setFocusPainted(false);
@@ -64,7 +65,7 @@ public class ProfessorDashboardPanel extends JPanel {
     private void initSidebar() {
         JPanel sidebarPanel = new JPanel(new GridLayout(8, 1, 5, 5));
         sidebarPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        sidebarPanel.setBackground(UIColors.BACKGROUND);
+        sidebarPanel.setBackground(UIColors.SUBHEADER);
         
         String[] menuItems = {
             "Mis Grupos",
@@ -79,7 +80,8 @@ public class ProfessorDashboardPanel extends JPanel {
         
         for (String item : menuItems) {
             JButton button = new JButton(item);
-            button.setBackground(UIColors.BUTTON);
+            button.setBackground(UIColors.BUTTON_PRIMARY);
+            button.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
             button.setForeground(Color.WHITE);
             button.setFont(new Font("Arial", Font.BOLD, 11));
             button.setFocusPainted(false);
@@ -93,10 +95,11 @@ public class ProfessorDashboardPanel extends JPanel {
     private void initContentArea() {
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
-        contentPanel.setBackground(UIColors.FORM_BACKGROUND);
+        contentPanel.setBackground(UIColors.PANEL_SOFT);
         
         JPanel welcomePanel = new JPanel(new BorderLayout());
         welcomePanel.add(new JLabel("Seleccione una opción del menú", JLabel.CENTER));
+        welcomePanel.setBackground(UIColors.PANEL_SOFT);
         contentPanel.add(welcomePanel, "WELCOME");
         
         contentPanel.add(new ProfessorMyGroupsPanel(currentUser), "Mis Grupos");

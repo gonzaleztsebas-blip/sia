@@ -6,6 +6,7 @@ package sia.sia.ui.panels.admin;
 
 import javax.swing.*;
 import java.awt.*;
+import sia.sia.ui.UIColors;
 import sia.sia.business.StudentManager;
 import sia.sia.data.Student;
 import java.util.List;
@@ -59,6 +60,7 @@ public class StudentManagementPanel extends JPanel {
         dialog.setTitle("Agregar Estudiante");
         dialog.setModal(true);
         dialog.setLayout(new GridLayout(6, 2, 10, 10));
+        dialog.getContentPane().setBackground(UIColors.PANEL_SOFT);
         dialog.setSize(400, 300);
 
         JTextField txtUser = new JTextField();
@@ -79,7 +81,9 @@ public class StudentManagementPanel extends JPanel {
         dialog.add(txtBirthDate);
 
         JButton btnSave = new JButton("Guardar");
+        btnSave.setBackground(UIColors.BUTTON_PRIMARY); btnSave.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
         JButton btnCancel = new JButton("Cancelar");
+        btnCancel.setBackground(UIColors.BUTTON_PRIMARY); btnCancel.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
 
         btnSave.addActionListener(e -> {
             String user = txtUser.getText();
@@ -127,6 +131,7 @@ public class StudentManagementPanel extends JPanel {
         dialog.setTitle("Editar Estudiante: " + username);
         dialog.setModal(true);
         dialog.setLayout(new GridLayout(5, 2, 10, 10));
+        dialog.getContentPane().setBackground(UIColors.PANEL_SOFT);
         dialog.setSize(400, 250);
 
         // Campos (usuario no editable)
@@ -146,7 +151,9 @@ public class StudentManagementPanel extends JPanel {
         dialog.add(txtBirthDate);
 
         JButton btnSave = new JButton("Guardar Cambios");
+        btnSave.setBackground(UIColors.BUTTON_PRIMARY); btnSave.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
         JButton btnCancel = new JButton("Cancelar");
+        btnCancel.setBackground(UIColors.BUTTON_PRIMARY); btnCancel.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
 
         btnSave.addActionListener(e -> {
             String newFirstName = txtFirstName.getText();

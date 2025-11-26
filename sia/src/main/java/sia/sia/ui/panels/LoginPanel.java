@@ -1,154 +1,182 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package sia.sia.ui.panels;
+
 import sia.sia.ui.*;
 import java.awt.*;
 import javax.swing.*;
 import sia.sia.business.CSVManager;
 import sia.sia.data.User;
 
-/**
- *
- * @author ASUS
- */
-public class LoginPanel extends JPanel{
-    private SIAFrame parentFrame;
-    
-    private JPanel tittlePanel;
-    private JPanel formPanel;
-    private JPanel footerPanel;
-    
+public class LoginPanel extends JPanel {
+
+    private final SIAFrame parentFrame;
+
     private JTextField txtUser;
     private JPasswordField pswPassword;
     private JButton btnEnter;
-    
-    public LoginPanel(SIAFrame parent){
-        parentFrame = parent;
+
+    public LoginPanel(SIAFrame parent) {
+        this.parentFrame = parent;
         setBackground(UIColors.BACKGROUND);
         initComponents();
         addActionListeners();
     }
-    
-    private void initComponents(){
-        setLayout(new BorderLayout());
-        setBackground(UIColors.BACKGROUND);
-        initTittlePanel();
-        add(tittlePanel, BorderLayout.NORTH);
-        initFormPanel();
-        add(formPanel, BorderLayout.CENTER);
-        initFooterPanel();
-        add(footerPanel, BorderLayout.SOUTH);
-        JPanel eastPanel = new JPanel();
-        eastPanel.setBackground(UIColors.BACKGROUND);
-        add(eastPanel, BorderLayout.EAST);
-        JPanel westPanel = new JPanel();
-        westPanel.setBackground(UIColors.BACKGROUND);
-        add(westPanel, BorderLayout.WEST);
+
+    private void initComponents() {
+        setLayout(new GridBagLayout());
+        
+        JPanel container = new JPanel(new GridBagLayout());
+        container.setBackground(UIColors.BACKGROUND);
+        container.setBorder(BorderFactory.createEmptyBorder(40, 60, 40, 60));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 20, 10, 5);
+        gbc.fill = GridBagConstraints.BOTH;
+
+        JPanel leftPanel = createLeftPanel();
+        gbc.gridx = 0;
+        gbc.weightx = 0.75;
+        gbc.weighty = 1;
+        container.add(leftPanel, gbc);
+
+        JPanel rightPanel = createRightPanel();
+        gbc.gridx = 1;
+        gbc.weightx = 0.55;
+        container.add(rightPanel, gbc);
+
+        add(container);
     }
-    
-    private void initTittlePanel(){
-        tittlePanel = new JPanel();
-        tittlePanel.setLayout(new BorderLayout());
-        tittlePanel.setBackground(UIColors.BACKGROUND);
-        JPanel northGap = new JPanel();
-        northGap.setBackground(UIColors.BACKGROUND);
-        tittlePanel.add(northGap, BorderLayout.NORTH);
-        JLabel title = new JLabel("Sistema de Información Académica");
-        title.setHorizontalAlignment(JLabel.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 18));
+
+    private JPanel createLeftPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(UIColors.PANEL_SOFT);
+        panel.setBorder(BorderFactory.createLineBorder(UIColors.PANEL_BORDER, 2));
+
+        // Header
+        JPanel header = new JPanel();
+        header.setBackground(UIColors.HEADER);
+        header.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
+
+        JLabel title = new JLabel("INICIE SESIÓN");
+        title.setFont(new Font("Arial", Font.BOLD, 16));
         title.setForeground(UIColors.LABEL_TEXT);
-        tittlePanel.add(title, BorderLayout.CENTER);
-        JPanel southGap = new JPanel();
-        southGap.setBackground(UIColors.BACKGROUND);
-        tittlePanel.add(southGap, BorderLayout.SOUTH);
-    }
-    
-    private void initFormPanel() {
-        // Panel que ocupa el centro pero NO se estira a lo ancho
-        JPanel outer = new JPanel(new GridBagLayout());
-        outer.setBackground(UIColors.BACKGROUND);
+        header.add(title);
 
-        // panel del formulario
-        formPanel = new JPanel(new GridLayout(3, 2, 10, 10));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        formPanel.setBackground(UIColors.FORM_BACKGROUND);
+        // Form
+        JPanel form = new JPanel(new GridLayout(3, 1, 10, 15));
+        form.setBackground(UIColors.PANEL_SOFT);
+        form.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        formPanel.setPreferredSize(new Dimension(300, 120));
+        // Usuario
+        JPanel userPanel = new JPanel(new BorderLayout());
+        userPanel.setBackground(UIColors.PANEL_SOFT);
 
-        JLabel userLabel = new JLabel("Usuario: ");
+        JLabel userLabel = new JLabel("usuario");
+        userLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         userLabel.setForeground(UIColors.LABEL_TEXT);
-        formPanel.add(userLabel);
-        txtUser = new JTextField(12);
+
+
+        txtUser = new JTextField();
         txtUser.setBackground(Color.WHITE);
-        txtUser.setForeground(UIColors.LABEL_TEXT);
-        formPanel.add(txtUser);
+        txtUser.setForeground(UIColors.TEXT);
 
-        JLabel passLabel = new JLabel("Contraseña: ");
+        userPanel.add(userLabel, BorderLayout.NORTH);
+        userPanel.add(txtUser, BorderLayout.CENTER);
+
+        // Contraseña
+        JPanel passPanel = new JPanel(new BorderLayout());
+        passPanel.setBackground(UIColors.PANEL_SOFT);
+
+        JLabel passLabel = new JLabel("clave");
+        passLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         passLabel.setForeground(UIColors.LABEL_TEXT);
-        formPanel.add(passLabel);
-        pswPassword = new JPasswordField(12);
+
+        pswPassword = new JPasswordField();
         pswPassword.setBackground(Color.WHITE);
-        pswPassword.setForeground(UIColors.LABEL_TEXT);
-        formPanel.add(pswPassword);
+        pswPassword.setForeground(UIColors.TEXT);
 
-        formPanel.add(new JLabel(""));
-        btnEnter = new JButton("Iniciar Sesión");
-        btnEnter.setBackground(UIColors.BUTTON);
-        btnEnter.setForeground(Color.WHITE);
+        passPanel.add(passLabel, BorderLayout.NORTH);
+        passPanel.add(pswPassword, BorderLayout.CENTER);
+
+        // Botón
+        btnEnter = new JButton("iniciar sesión");
+        btnEnter.setBackground(UIColors.BUTTON_PRIMARY);
+        btnEnter.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
         btnEnter.setFont(new Font("Arial", Font.BOLD, 12));
-        btnEnter.setFocusPainted(false);
-        formPanel.add(btnEnter);
+        btnEnter.setBorder(BorderFactory.createLineBorder(UIColors.PANEL_BORDER));
 
-        outer.add(formPanel);  
-        // importante: aquí NO uses BorderLayout, usa el wrapper
-        formPanel = outer;
+        form.add(userPanel);
+        form.add(passPanel);
+        form.add(btnEnter);
+
+        panel.add(header, BorderLayout.NORTH);
+        panel.add(form, BorderLayout.CENTER);
+
+        return panel;
     }
 
+    private JPanel createRightPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(UIColors.BACKGROUND);
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 0));
 
-    
-    private void initFooterPanel() {
-        footerPanel = new JPanel();
-        footerPanel.setLayout(new BoxLayout(footerPanel, BoxLayout.Y_AXIS));
-        footerPanel.setBackground(UIColors.BACKGROUND);
+        JPanel welcomePanel = new JPanel(new BorderLayout());
+        welcomePanel.setBackground(UIColors.PANEL_SOFT);
+        welcomePanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(UIColors.PANEL_BORDER),
+            BorderFactory.createEmptyBorder(15, 15, 15, 15)
+        ));
 
-        footerPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0)); 
-        footerPanel.setOpaque(true);
+        JLabel welcomeTitle = new JLabel("Bienvenido Visitante,");
+        welcomeTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        welcomeTitle.setForeground(UIColors.LABEL_TEXT);
 
-        JLabel lblCuenta = new JLabel("Contacte al administrador para crear una nueva cuenta");
-        lblCuenta.setAlignmentX(Component.CENTER_ALIGNMENT);
-        lblCuenta.setForeground(UIColors.LABEL_TEXT);
+        JTextArea welcomeText = new JTextArea(
+            "Si usted es un usuario activo de la Universidad,\n" +
+            "por favor inicie su sesión.\n\n" +
+            "Si usted fue admitido, consulte el proceso de registro.\n\n" +
+            "Si no cumple ningún caso anterior, seleccione el\n" +
+            "servicio que desea consultar."
+        );
+        welcomeText.setEditable(false);
+        welcomeText.setBackground(UIColors.PANEL_SOFT);
+        welcomeText.setForeground(UIColors.TEXT);
+        welcomeText.setFont(new Font("Arial", Font.PLAIN, 12));
+        welcomeText.setLineWrap(true);
+        welcomeText.setWrapStyleWord(true);
 
-        footerPanel.add(lblCuenta);
-        footerPanel.add(Box.createVerticalStrut(25)); // espacio pequeño
+        welcomePanel.add(welcomeTitle, BorderLayout.NORTH);
+        welcomePanel.add(welcomeText, BorderLayout.CENTER);
+
+        panel.add(welcomePanel, BorderLayout.NORTH);
+
+        return panel;
     }
-    
-    private void addActionListeners(){
-        btnEnter.addActionListener( e -> login());
+
+    private void addActionListeners() {
+        btnEnter.addActionListener(e -> login());
     }
-    
-    private void login(){
+
+    private void login() {
         String username = txtUser.getText();
-            String password = new String(pswPassword.getPassword());
-            if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Por favor complete todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            User currentUser = CSVManager.login(username, password);
-            if (currentUser != null) {
-                JOptionPane.showMessageDialog(this, "Login exitoso!\nBienvenido: " + username, "Éxito", JOptionPane.INFORMATION_MESSAGE);
+        String password = new String(pswPassword.getPassword());
 
-                switch(currentUser.getRole().toLowerCase()) {
-                    case "admin": parentFrame.showCard("ADMIN_DASHBOARD", username); break;
-                    case "student": parentFrame.showCard("STUDENT_DASHBOARD", username); break;
-                    case "professor": parentFrame.showCard("PROFESSOR_DASHBOARD", username); break;
-                }
-                
-                txtUser.setText("");
-                pswPassword.setText("");
-            } else {
-                JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Por favor complete todos los campos", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        User currentUser = CSVManager.login(username, password);
+
+        if (currentUser != null) {
+            JOptionPane.showMessageDialog(this, "Login exitoso!\nBienvenido: " + username,
+                                          "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+            parentFrame.showCard(currentUser.getRole().toUpperCase() + "_DASHBOARD", username);
+
+            txtUser.setText("");
+            pswPassword.setText("");
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }

@@ -5,6 +5,7 @@ import sia.sia.business.GradeManager;
 import sia.sia.data.Group;
 import javax.swing.*;
 import java.awt.*;
+import sia.sia.ui.UIColors;
 
 public class ProfessorGroupAveragePanel extends JPanel {
     private String currentUser;

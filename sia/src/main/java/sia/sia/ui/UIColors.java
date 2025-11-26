@@ -3,36 +3,57 @@ package sia.sia.ui;
 import java.awt.Color;
 
 /**
- * Clase con los colores de la interfaz según el diseño
+ * Colores centralizados para replicar el estilo institucional del SIA
  */
 public class UIColors {
-    // Fondo general: azul claro
-    public static final Color BACKGROUND = new Color(168, 200, 220);
-    
-    // Botón primario: azul oscuro
-    public static final Color BUTTON = new Color(46, 91, 127);
-    
-    // Botón secundario: beige
-    public static final Color BUTTON_SECONDARY = new Color(230, 213, 186);
-    
-    // Texto de botón primario: blanco
-    public static final Color BUTTON_PRIMARY_TEXT = Color.WHITE;
-    
-    // Texto de botón secundario: azul oscuro
-    public static final Color BUTTON_SECONDARY_TEXT = new Color(46, 91, 127);
-    
-    // Fondo de formularios: blanco
-    public static final Color FORM_BACKGROUND = new Color(255, 255, 255);
-    
-    // Texto de labels: gris azulado oscuro (mantenido para buena legibilidad)
-    public static final Color LABEL_TEXT = new Color(44, 62, 80);
-    
-    // Colores adicionales derivados
-    public static final Color BUTTON_HOVER = new Color(30, 70, 110);  // Azul más oscuro
-    public static final Color BUTTON_PRESSED = new Color(20, 50, 80); // Azul más oscuro aún
-    
-    // Panel interno con transparencia (cuando se necesite)
-    public static Color getTransparentPanel() {
-        return new Color(255, 255, 255, 200); // Blanco con transparencia
+
+    // === Colores base del diseño ===
+
+    // Fondo general (beige institucional)
+    public static final Color BACKGROUND = new Color(210, 200, 170);
+
+    // Encabezado amarillo fuerte (barra superior)
+    public static final Color HEADER = new Color(246, 194, 57);
+
+    // Barra secundaria gris-verdosa
+    public static final Color SUBHEADER = new Color(180, 170, 120);
+
+    // Panel de contenido (amarillo suave)
+    public static final Color PANEL_SOFT = new Color(248, 232, 182);
+
+    // Borde clásico de recuadros en SIA
+    public static final Color PANEL_BORDER = new Color(180, 170, 140);
+
+
+    // === Botones ===
+
+    // Botón principal (mismo amarillo del encabezado)
+    public static final Color BUTTON_PRIMARY = HEADER;
+
+    // Texto del botón principal (negro por contraste real del SIA)
+    public static final Color BUTTON_PRIMARY_TEXT = Color.BLACK;
+
+    // Hover del botón (un poco más oscuro)
+    public static final Color BUTTON_PRIMARY_HOVER = new Color(222, 170, 40);
+
+    // Presionado (oscuro fuerte)
+    public static final Color BUTTON_PRIMARY_PRESSED = new Color(190, 145, 30);
+
+
+    // === Texto ===
+
+    // Texto general
+    public static final Color TEXT = new Color(60, 60, 60);
+
+    // Texto destacado o labels
+    public static final Color LABEL_TEXT = Color.BLACK;
+
+
+    // === Utilidades ===
+
+    // Transparencia para paneles o overlays
+    public static Color transparent(int alpha) {
+        return new Color(255, 255, 255, alpha);
     }
 }
+

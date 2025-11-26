@@ -6,6 +6,7 @@ package sia.sia.ui.panels.admin;
 
 import javax.swing.*;
 import java.awt.*;
+import sia.sia.ui.UIColors;
 import sia.sia.business.ProfessorManager;
 import sia.sia.data.Professor;
 import java.util.List;
@@ -54,19 +55,33 @@ public class ProfessorManagementPanel extends JPanel {
     }
     
     private void loadProfessorData() {
+        // Limpiar tabla
         tableModel.setRowCount(0);
+
+        // Obtener profesores
         List<String[]> professors = ProfessorManager.getProfessors();
-        
+
         for (String[] professor : professors) {
-            if (professor.length >= 7) {
+                        // Verificar que tenga al menos los datos mínimos
+            if (professor.length >= 4) { // username, password, role, id mínimo
+                String username = professor[0];
+                String firstName = professor.length >= 5 ? professor[4] : "N/A";
+                String lastName = professor.length >= 6 ? professor[5] : "N/A";
+                String birthDate = professor.length >= 7 ? professor[6] : "N/A";
+
                 tableModel.addRow(new Object[]{
-                    professor[0], // usuario
-                    professor[4], // nombre
-                    professor[5], // apellido
-                    professor[6]  // fecha nacimiento
+                    username,
+                    firstName,
+                    lastName,
+                    birthDate
                 });
             }
         }
+
+        // Forzar actualización visual
+        tableModel.fireTableDataChanged();
+        professorTable.revalidate();
+        professorTable.repaint();
     }
     
     private void showAddProfessorDialog() {
@@ -74,6 +89,7 @@ public class ProfessorManagementPanel extends JPanel {
         dialog.setTitle("Agregar Profesor");
         dialog.setModal(true);
         dialog.setLayout(new GridLayout(6, 2, 10, 10));
+        dialog.getContentPane().setBackground(UIColors.PANEL_SOFT);
         dialog.setSize(400, 300);
         
         JTextField txtUser = new JTextField();
@@ -94,7 +110,9 @@ public class ProfessorManagementPanel extends JPanel {
         dialog.add(txtBirthDate);
         
         JButton btnSave = new JButton("Guardar");
+        btnSave.setBackground(UIColors.BUTTON_PRIMARY); btnSave.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
         JButton btnCancel = new JButton("Cancelar");
+        btnCancel.setBackground(UIColors.BUTTON_PRIMARY); btnCancel.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
         
         btnSave.addActionListener(e -> {
             String user = txtUser.getText();
@@ -142,6 +160,7 @@ public class ProfessorManagementPanel extends JPanel {
         dialog.setTitle("Editar Profesor: " + username);
         dialog.setModal(true);
         dialog.setLayout(new GridLayout(5, 2));
+        dialog.getContentPane().setBackground(UIColors.PANEL_SOFT);
         dialog.setSize(400, 250);
         
         JTextField txtUser = new JTextField(username);
@@ -160,7 +179,9 @@ public class ProfessorManagementPanel extends JPanel {
         dialog.add(txtBirthDate);
         
         JButton btnSave = new JButton("Guardar Cambios");
+        btnSave.setBackground(UIColors.BUTTON_PRIMARY); btnSave.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
         JButton btnCancel = new JButton("Cancelar");
+        btnCancel.setBackground(UIColors.BUTTON_PRIMARY); btnCancel.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
         
         btnSave.addActionListener(e -> {
             String newFirstName = txtFirstName.getText();

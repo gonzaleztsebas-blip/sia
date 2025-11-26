@@ -4,6 +4,7 @@ import sia.sia.business.EnrollmentManager;
 import sia.sia.data.Group;
 import javax.swing.*;
 import java.awt.*;
+import sia.sia.ui.UIColors;
 import java.util.List;
 
 public class StudentWithdrawCoursePanel extends JPanel {
@@ -16,6 +17,7 @@ public class StudentWithdrawCoursePanel extends JPanel {
     
     private void initComponents() {
         setLayout(new BorderLayout());
+        setBackground(UIColors.PANEL_SOFT);
         setBorder(BorderFactory.createTitledBorder("Retirar Materia"));
         
         JPanel formPanel = new JPanel();

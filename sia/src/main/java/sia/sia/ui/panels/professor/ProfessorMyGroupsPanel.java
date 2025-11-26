@@ -5,6 +5,7 @@ import sia.sia.data.Group;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import sia.sia.ui.UIColors;
 import java.util.List;
 
 public class ProfessorMyGroupsPanel extends JPanel {

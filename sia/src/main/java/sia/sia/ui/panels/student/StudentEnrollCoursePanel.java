@@ -7,6 +7,7 @@ import sia.sia.data.Group;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import sia.sia.ui.UIColors;
 
 public class StudentEnrollCoursePanel extends JPanel {
     private String currentUser;
@@ -18,6 +19,7 @@ public class StudentEnrollCoursePanel extends JPanel {
     
     private void initComponents() {
         setLayout(new BorderLayout());
+        setBackground(UIColors.PANEL_SOFT);
         setBorder(BorderFactory.createTitledBorder("Inscribir Materia"));
         
         JPanel formPanel = new JPanel();
@@ -26,9 +28,11 @@ public class StudentEnrollCoursePanel extends JPanel {
         
         JLabel courseLabel = new JLabel("Seleccionar Curso:");
         JComboBox<String> courseCombo = new JComboBox<>();
-        
+        courseCombo.setMaximumRowCount(5); // Mostrar máximo 5 opciones a la vez
+              
         JLabel groupLabel = new JLabel("Seleccionar Grupo:");
         JComboBox<String> groupCombo = new JComboBox<>();
+        groupCombo.setMaximumRowCount(5);  
         
         JButton enrollBtn = new JButton("Inscribir");
         enrollBtn.addActionListener(e -> {

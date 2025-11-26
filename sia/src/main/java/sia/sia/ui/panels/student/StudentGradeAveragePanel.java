@@ -5,6 +5,7 @@ import sia.sia.data.Grade;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import sia.sia.ui.UIColors;
 
 public class StudentGradeAveragePanel extends JPanel {
     private String currentUser;
@@ -16,44 +17,63 @@ public class StudentGradeAveragePanel extends JPanel {
     
     private void initComponents() {
         setLayout(new BorderLayout());
+        setBackground(UIColors.PANEL_SOFT);
         setBorder(BorderFactory.createTitledBorder("Promedio Académico"));
         
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         
-        JLabel avgLabel = new JLabel("Promedio General: --");
-        avgLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        JLabel paLabel = new JLabel("PA (Promedio Acumulado): --");
+        paLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        
+        JLabel pappaLabel = new JLabel("PAPPA (Promedio Aritmético Ponderado Acumulado): --");
+        pappaLabel.setFont(new Font("Arial", Font.BOLD, 16));
         
         JButton refreshBtn = new JButton("Actualizar");
-        refreshBtn.addActionListener(e -> updateAverage(avgLabel));
+        refreshBtn.addActionListener(e -> updateAverage(paLabel, pappaLabel));
         
         mainPanel.add(Box.createVerticalStrut(20));
-        mainPanel.add(avgLabel);
+        mainPanel.add(paLabel);
+        mainPanel.add(Box.createVerticalStrut(15));
+        mainPanel.add(pappaLabel);
         mainPanel.add(Box.createVerticalStrut(30));
         mainPanel.add(refreshBtn);
         mainPanel.add(Box.createVerticalGlue());
         
         add(mainPanel, BorderLayout.CENTER);
         
-        updateAverage(avgLabel);
+        updateAverage(paLabel, pappaLabel);
     }
     
-    private void updateAverage(JLabel avgLabel) {
+    private void updateAverage(JLabel paLabel, JLabel pappaLabel) {
         try {
             List<Grade> grades = GradeManager.getGradesByStudent(currentUser);
             
             if (!grades.isEmpty()) {
-                double total = 0;
+                // Calcular PA (Promedio Acumulado) - promedio simple de todas las calificaciones
+                double totalPA = 0;
                 for (Grade grade : grades) {
-                    total += grade.getGrade();
+                    totalPA += grade.getGrade();
                 }
-                double average = total / grades.size();
-                avgLabel.setText(String.format("Promedio General: %.2f", average));
+                double pa = totalPA / grades.size();
+                
+                // Calcular PAPPA - simulando ponderación por período (asumiendo últimas 4 calificaciones como período actual)
+                double totalPAPPA = 0;
+                int pappaCount = Math.min(4, grades.size());
+                for (int i = 0; i < pappaCount; i++) {
+                    totalPAPPA += grades.get(grades.size() - 1 - i).getGrade();
+                }
+                double pappa = totalPAPPA / pappaCount;
+                
+                paLabel.setText(String.format("PA (Promedio Acumulado): %.2f", pa));
+                pappaLabel.setText(String.format("PAPPA (Ponderado Por Período): %.2f", pappa));
             } else {
-                avgLabel.setText("Promedio General: Sin calificaciones");
+                paLabel.setText("PA (Promedio Acumulado): Sin calificaciones");
+                pappaLabel.setText("PAPPA (Ponderado Por Período): Sin calificaciones");
             }
         } catch (Exception e) {
-            avgLabel.setText("Promedio General: Error al calcular");
+            paLabel.setText("PA (Promedio Acumulado): Error al calcular");
+            pappaLabel.setText("PAPPA (Ponderado Por Período): Error al calcular");
         }
     }
 }

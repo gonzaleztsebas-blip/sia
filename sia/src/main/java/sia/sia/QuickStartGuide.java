@@ -42,14 +42,16 @@ public class QuickStartGuide {
         // Administrador
         CSVManager.signUp("admin", "admin123", "admin");
 
-        // Profesores
-        CSVManager.signUp("prof_garcia", "prof123", "professor");
-        CSVManager.signUp("prof_rodriguez", "prof123", "professor");
+        // Profesores (createProfessor debería crear el usuario automáticamente)
+        ProfessorManager.createProfessor("prof_garcia", "prof123", "Luis", "Garcia", "1975-06-15");
+        ProfessorManager.createProfessor("prof_rodriguez", "prof123", "Ana", "Rodriguez", "1980-09-20");
 
-        // Estudiantes
-        CSVManager.signUp("juan_perez", "student123", "student");
-        CSVManager.signUp("maria_lopez", "student123", "student");
-        CSVManager.signUp("carlos_gomez", "student123", "student");
+        // Estudiantes (createStudent debería crear el usuario automáticamente)
+        StudentManager.createStudent("juan_perez", "student123", "Juan", "Perez", "2000-05-15");
+        StudentManager.createStudent("maria_lopez", "student123", "Maria", "Lopez", "1999-08-22");
+        StudentManager.createStudent("carlos_gomez", "student123", "Carlos", "Gomez", "2001-03-10");
+
+        System.out.println("   ✓ Usuarios creados correctamente.\n");
 
         System.out.println("   ✓ Usuarios creados correctamente.\n");
 

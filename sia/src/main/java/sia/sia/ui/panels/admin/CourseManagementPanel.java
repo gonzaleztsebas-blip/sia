@@ -6,6 +6,7 @@ package sia.sia.ui.panels.admin;
 
 import javax.swing.*;
 import java.awt.*;
+import sia.sia.ui.UIColors;
 import sia.sia.business.CourseManager;
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +80,7 @@ public class CourseManagementPanel extends JPanel {
         dialog.setModal(true);
         dialog.setSize(500, 450);
         dialog.setLayout(new BorderLayout(10, 10));
+        dialog.getContentPane().setBackground(UIColors.PANEL_SOFT);
 
         // --- FORMULARIO ---
         JPanel formPanel = new JPanel(new GridLayout(2, 2, 10, 10));
@@ -115,8 +117,11 @@ public class CourseManagementPanel extends JPanel {
 
         // --- BOTONES ---
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setBackground(UIColors.PANEL_SOFT);
         JButton btnSave = new JButton("Guardar");
+        btnSave.setBackground(UIColors.BUTTON_PRIMARY); btnSave.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
         JButton btnCancel = new JButton("Cancelar");
+        btnCancel.setBackground(UIColors.BUTTON_PRIMARY); btnCancel.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
         buttonPanel.add(btnSave);
         buttonPanel.add(btnCancel);
 
@@ -124,6 +129,7 @@ public class CourseManagementPanel extends JPanel {
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        contentPanel.setBackground(UIColors.PANEL_SOFT);
 
         contentPanel.add(formPanel);
         contentPanel.add(Box.createVerticalStrut(15));
@@ -231,6 +237,7 @@ public class CourseManagementPanel extends JPanel {
     dialog.setModal(true);
     dialog.setSize(500, 450);
     dialog.setLayout(new BorderLayout(10, 10));
+    dialog.getContentPane().setBackground(UIColors.PANEL_SOFT);
 
     // --- FORMULARIO ---
     JPanel formPanel = new JPanel(new GridLayout(3, 2, 10, 10));
@@ -288,8 +295,11 @@ public class CourseManagementPanel extends JPanel {
 
     // --- BOTONES ---
     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    buttonPanel.setBackground(UIColors.PANEL_SOFT);
     JButton btnSave = new JButton("Guardar Cambios");
+    btnSave.setBackground(UIColors.BUTTON_PRIMARY); btnSave.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
     JButton btnCancel = new JButton("Cancelar");
+    btnCancel.setBackground(UIColors.BUTTON_PRIMARY); btnCancel.setForeground(UIColors.BUTTON_PRIMARY_TEXT);
     buttonPanel.add(btnSave);
     buttonPanel.add(btnCancel);
 
@@ -297,6 +307,7 @@ public class CourseManagementPanel extends JPanel {
     JPanel contentPanel = new JPanel();
     contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
     contentPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    contentPanel.setBackground(UIColors.PANEL_SOFT);
 
     contentPanel.add(formPanel);
     contentPanel.add(Box.createVerticalStrut(15));

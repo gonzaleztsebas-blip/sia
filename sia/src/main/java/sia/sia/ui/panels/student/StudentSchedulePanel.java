@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
+import sia.sia.ui.UIColors;
 
 public class StudentSchedulePanel extends JPanel {
     private String currentUser;
@@ -15,9 +16,11 @@ public class StudentSchedulePanel extends JPanel {
         initComponents();
     }
     
+    
     private void initComponents() {
         setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder("Mi Horario"));
+            setBackground(UIColors.PANEL_SOFT);
+            setBorder(BorderFactory.createTitledBorder("Mi Horario"));
         
         JButton refreshBtn = new JButton("Actualizar");
         

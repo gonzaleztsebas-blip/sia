@@ -5,6 +5,7 @@ import sia.sia.data.Group;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import sia.sia.ui.UIColors;
 import java.util.List;
 
 public class StudentCurrentEnrollmentsPanel extends JPanel {
@@ -22,7 +23,7 @@ public class StudentCurrentEnrollmentsPanel extends JPanel {
         JButton refreshBtn = new JButton("Actualizar");
         
         DefaultTableModel model = new DefaultTableModel(
-            new String[]{"Grupo", "Materia", "Créditos", "Profesor"}, 0
+            new String[]{"Grupo", "Materia", "Créditos", "Componente", "Profesor"}, 0
         );
         JTable table = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(table);
@@ -40,10 +41,21 @@ public class StudentCurrentEnrollmentsPanel extends JPanel {
         
         List<Group> enrollments = EnrollmentManager.getCurrentEnrollments(currentUser);
         for (Group group : enrollments) {
+            int[] credits = group.getRepresents().getCredits();
+            int totalCredits = 0;
+            String component = "";
+            
+            // Encontrar cuál componente tiene créditos
+            if (credits[0] > 0) { totalCredits = credits[0]; component = "Fundamentación"; }
+            else if (credits[1] > 0) { totalCredits = credits[1]; component = "Disciplinar"; }
+            else if (credits[2] > 0) { totalCredits = credits[2]; component = "Libre Elección"; }
+            else if (credits[3] > 0) { totalCredits = credits[3]; component = "Nivelación"; }
+            
             model.addRow(new Object[]{
                 String.valueOf(group.getNumber()),
                 group.getRepresents().getName(),
-                group.getRepresents().getCredits(),
+                totalCredits,
+                component,
                 group.getTaughtBy() != null ? group.getTaughtBy().getFirstName() : "N/A"
             });
         }

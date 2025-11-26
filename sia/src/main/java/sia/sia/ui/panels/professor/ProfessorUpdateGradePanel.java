@@ -6,6 +6,7 @@ import sia.sia.data.Group;
 import sia.sia.data.Grade;
 import javax.swing.*;
 import java.awt.*;
+import sia.sia.ui.UIColors;
 
 public class ProfessorUpdateGradePanel extends JPanel {
     private String currentUser;
@@ -17,6 +18,7 @@ public class ProfessorUpdateGradePanel extends JPanel {
     
     private void initComponents() {
         setLayout(new BorderLayout());
+        setBackground(UIColors.PANEL_SOFT);
         setBorder(BorderFactory.createTitledBorder("Actualizar Calificación"));
         
         JPanel formPanel = new JPanel();
