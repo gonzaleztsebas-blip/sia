@@ -12,20 +12,20 @@ import java.util.Set;
 
 /**
  * Utilidad para validar cruces de horarios
+ *
  * @author luzel
  */
 public class ScheduleValidator {
 
     /**
-     * OPCIÓN 1: Validación con bloques de tiempo predefinidos
-     * Formato: daysOfWeek = ["L", "M", "W"]
-     *          timesOfDay = ["7-9", "7-9", "7-9"]
+     * OPCIÓN 1: Validación con bloques de tiempo predefinidos Formato:
+     * daysOfWeek = ["L", "M", "W"] timesOfDay = ["7-9", "7-9", "7-9"]
      */
     public static boolean hasScheduleConflict(String studentUser, Group newGroup) {
-        
+
         // Obtener todos los grupos actuales del estudiante
         List<Group> studentGroups = GroupManager.getGroupsByStudent(studentUser);
-        
+
         if (studentGroups.isEmpty()) {
             return false; // No tiene grupos, no hay conflicto
         }
@@ -51,9 +51,9 @@ public class ScheduleValidator {
 
             // Verificar si hay cruce
             if (hasConflictBetweenGroups(newDays, newTimes, existingDays, existingTimes)) {
-                System.out.println("Cruce de horario detectado con el curso: " 
-                    + existingGroup.getRepresents().getName() 
-                    + " (Grupo " + existingGroup.getNumber() + ")");
+                System.out.println("Cruce de horario detectado con el curso: "
+                        + existingGroup.getRepresents().getName()
+                        + " (Grupo " + existingGroup.getNumber() + ")");
                 return true;
             }
         }
@@ -64,18 +64,37 @@ public class ScheduleValidator {
     /**
      * Compara dos horarios para detectar cruces
      */
-    private static boolean hasConflictBetweenGroups(String[] days1, String[] times1, 
-                                                     String[] days2, String[] times2) {
-        
+    /**
+     * Compara dos horarios para detectar cruces
+     */
+    public static boolean hasConflictBetweenGroups(String[] days1, String[] times1,
+            String[] days2, String[] times2) {
+
+        // Validar arrays null o vacíos
+        if (days1 == null || times1 == null || days2 == null || times2 == null) {
+            return false;
+        }
+        if (days1.length == 0 || times1.length == 0 || days2.length == 0 || times2.length == 0) {
+            return false;
+        }
+
         // Crear un mapa de día -> bloques de tiempo para el primer grupo
         for (int i = 0; i < days1.length && i < times1.length; i++) {
-            String day1 = days1[i].trim().toUpperCase();
-            String time1 = times1[i].trim();
+            String day1 = days1[i] != null ? days1[i].trim().toUpperCase() : "";
+            String time1 = times1[i] != null ? times1[i].trim() : "";
+
+            if (day1.isEmpty() || time1.isEmpty()) {
+                continue;
+            }
 
             // Comparar con el segundo grupo
             for (int j = 0; j < days2.length && j < times2.length; j++) {
-                String day2 = days2[j].trim().toUpperCase();
-                String time2 = times2[j].trim();
+                String day2 = days2[j] != null ? days2[j].trim().toUpperCase() : "";
+                String time2 = times2[j] != null ? times2[j].trim() : "";
+
+                if (day2.isEmpty() || time2.isEmpty()) {
+                    continue;
+                }
 
                 // Si es el mismo día Y mismo bloque de tiempo → CONFLICTO
                 if (day1.equals(day2) && time1.equals(time2)) {
@@ -88,14 +107,13 @@ public class ScheduleValidator {
     }
 
     /**
-     * OPCIÓN 2: Validación con horarios exactos (más compleja)
-     * Formato: daysOfWeek = ["L", "M"]
-     *          timesOfDay = ["07:00-09:00", "07:00-09:00"]
+     * OPCIÓN 2: Validación con horarios exactos (más compleja) Formato:
+     * daysOfWeek = ["L", "M"] timesOfDay = ["07:00-09:00", "07:00-09:00"]
      */
     public static boolean hasScheduleConflictDetailed(String studentUser, Group newGroup) {
-        
+
         List<Group> studentGroups = GroupManager.getGroupsByStudent(studentUser);
-        
+
         if (studentGroups.isEmpty()) {
             return false;
         }
@@ -116,8 +134,8 @@ public class ScheduleValidator {
             }
 
             if (hasTimeRangeConflict(newDays, newTimes, existingDays, existingTimes)) {
-                System.out.println("Cruce de horario con: " 
-                    + existingGroup.getRepresents().getName());
+                System.out.println("Cruce de horario con: "
+                        + existingGroup.getRepresents().getName());
                 return true;
             }
         }
@@ -126,12 +144,11 @@ public class ScheduleValidator {
     }
 
     /**
-     * Compara rangos de tiempo (más preciso)
-     * Formato: "07:00-09:00"
+     * Compara rangos de tiempo (más preciso) Formato: "07:00-09:00"
      */
-    private static boolean hasTimeRangeConflict(String[] days1, String[] times1, 
-                                                 String[] days2, String[] times2) {
-        
+    public static boolean hasTimeRangeConflict(String[] days1, String[] times1,
+            String[] days2, String[] times2) {
+
         for (int i = 0; i < days1.length && i < times1.length; i++) {
             String day1 = days1[i].trim().toUpperCase();
             String timeRange1 = times1[i].trim();
@@ -162,7 +179,9 @@ public class ScheduleValidator {
     private static TimeRange parseTimeRange(String timeRange) {
         try {
             String[] parts = timeRange.split("-");
-            if (parts.length != 2) return null;
+            if (parts.length != 2) {
+                return null;
+            }
 
             int start = parseTime(parts[0].trim());
             int end = parseTime(parts[1].trim());
@@ -187,6 +206,7 @@ public class ScheduleValidator {
      * Clase interna para representar un rango de tiempo
      */
     private static class TimeRange {
+
         int start; // minutos desde medianoche
         int end;
 
@@ -204,30 +224,31 @@ public class ScheduleValidator {
     }
 
     /**
-     * OPCIÓN 3: Validación simplificada por cadenas (menos precisa pero funcional)
+     * OPCIÓN 3: Validación simplificada por cadenas (menos precisa pero
+     * funcional)
      */
     public static boolean hasScheduleConflictSimple(String studentUser, Group newGroup) {
-        
+
         List<Group> studentGroups = GroupManager.getGroupsByStudent(studentUser);
-        
+
         for (Group existing : studentGroups) {
             // Convertir a Sets para comparación rápida
             Set<String> newSchedule = createScheduleSet(
-                newGroup.getDaysOfWeek(), 
-                newGroup.getTimesOfDay()
+                    newGroup.getDaysOfWeek(),
+                    newGroup.getTimesOfDay()
             );
-            
+
             Set<String> existingSchedule = createScheduleSet(
-                existing.getDaysOfWeek(), 
-                existing.getTimesOfDay()
+                    existing.getDaysOfWeek(),
+                    existing.getTimesOfDay()
             );
 
             // Buscar intersección
             newSchedule.retainAll(existingSchedule);
-            
+
             if (!newSchedule.isEmpty()) {
-                System.out.println("Cruce de horario con: " 
-                    + existing.getRepresents().getName());
+                System.out.println("Cruce de horario con: "
+                        + existing.getRepresents().getName());
                 return true;
             }
         }
@@ -236,12 +257,12 @@ public class ScheduleValidator {
     }
 
     /**
-     * Crea un conjunto de "DIA-HORA" para comparación
-     * Ejemplo: {"L-7-9", "M-7-9", "W-7-9"}
+     * Crea un conjunto de "DIA-HORA" para comparación Ejemplo: {"L-7-9",
+     * "M-7-9", "W-7-9"}
      */
     private static Set<String> createScheduleSet(String[] days, String[] times) {
         Set<String> schedule = new HashSet<>();
-        
+
         if (days == null || times == null) {
             return schedule;
         }
@@ -259,7 +280,7 @@ public class ScheduleValidator {
     public static void printSchedule(Group group) {
         System.out.println("\nHorario del grupo " + group.getNumber() + ":");
         System.out.println("Curso: " + group.getRepresents().getName());
-        
+
         String[] days = group.getDaysOfWeek();
         String[] times = group.getTimesOfDay();
 
@@ -277,14 +298,22 @@ public class ScheduleValidator {
      */
     private static String getDayName(String code) {
         switch (code.trim().toUpperCase()) {
-            case "L": return "Lunes";
-            case "M": return "Martes";
-            case "W": return "Miercoles";
-            case "J": return "Jueves";
-            case "V": return "Viernes";
-            case "S": return "Sabado";
-            case "D": return "Domingo";
-            default: return code;
+            case "L":
+                return "Lunes";
+            case "M":
+                return "Martes";
+            case "W":
+                return "Miercoles";
+            case "J":
+                return "Jueves";
+            case "V":
+                return "Viernes";
+            case "S":
+                return "Sabado";
+            case "D":
+                return "Domingo";
+            default:
+                return code;
         }
     }
 

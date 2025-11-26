@@ -4,9 +4,6 @@
  */
 package sia.sia.data;
 
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -163,5 +160,4 @@ public abstract class User {
         return array;
     }
     
-    public abstract void menu();
 }

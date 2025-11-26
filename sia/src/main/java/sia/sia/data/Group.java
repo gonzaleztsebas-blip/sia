@@ -13,7 +13,7 @@ import java.util.Objects;
  * @author luzel
  */
 public class Group {
-    
+
     private long number;
     private String[] daysOfWeek;
     private String[] timesOfDay;
@@ -22,7 +22,7 @@ public class Group {
     private Professor taughtBy;
     private List<Student> attendedBy;
     private List<Grade> issues;
-    
+
     public Group(long number, String[] daysOfWeek, String[] timesOfDay, String semester, Course represents) {
         this.number = number;
         this.daysOfWeek = daysOfWeek;
@@ -33,6 +33,7 @@ public class Group {
         this.attendedBy = null;
         this.issues = null;
     }
+
     public Group(long number, String[] daysOfWeek, String[] timesOfDay, String semester, Course represents, Professor taughtBy, List<Student> attendedBy, List<Grade> issues) {
         this.number = number;
         this.daysOfWeek = daysOfWeek;
@@ -43,7 +44,7 @@ public class Group {
         this.attendedBy = attendedBy;
         this.issues = issues;
     }
-    
+
     public long getNumber() {
         return number;
     }
@@ -74,6 +75,48 @@ public class Group {
 
     public List<Grade> getIssues() {
         return issues;
+    }
+
+    public String getScheduleFormatted() {
+        if (daysOfWeek == null || timesOfDay == null) {
+            return "Sin horario";
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < daysOfWeek.length; i++) {
+            String day = daysOfWeek[i];
+            String time = (i < timesOfDay.length) ? timesOfDay[i] : "";
+
+            sb.append(getDayName(day)).append(": ").append(time);
+
+            if (i < daysOfWeek.length - 1) {
+                sb.append(" | ");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private String getDayName(String code) {
+        switch (code.trim().toUpperCase()) {
+            case "L":
+                return "Lunes";
+            case "M":
+                return "Martes";
+            case "W":
+                return "Miércoles";
+            case "J":
+                return "Jueves";
+            case "V":
+                return "Viernes";
+            case "S":
+                return "Sábado";
+            case "D":
+                return "Domingo";
+            default:
+                return code;
+        }
     }
 
     public void setNumber(long number) {
@@ -160,37 +203,37 @@ public class Group {
 
     @Override
     public String toString() {
-        return "Group{" +
-                "number=" + number +
-                ", daysOfWeek=" + Arrays.toString(daysOfWeek) +
-                ", timesOfDay=" + Arrays.toString(timesOfDay) +
-                ", semester=" + semester +
-                ", represents=" + (represents == null ? null : represents.getCode()) +
-                ", taughtBy=" + (taughtBy == null ? null : taughtBy.getId()) +
-                ", attendedBy=" + (attendedBy == null ? null : attendedBy.stream().map(Student::getId).toList()) +
-                ", issues=" + (issues == null ? null : issues.stream().map(grade -> grade.getGrade()).toList()) +
-                '}';
+        return "Group{"
+                + "number=" + number
+                + ", daysOfWeek=" + Arrays.toString(daysOfWeek)
+                + ", timesOfDay=" + Arrays.toString(timesOfDay)
+                + ", semester=" + semester
+                + ", represents=" + (represents == null ? null : represents.getCode())
+                + ", taughtBy=" + (taughtBy == null ? null : taughtBy.getId())
+                + ", attendedBy=" + (attendedBy == null ? null : attendedBy.stream().map(Student::getId).toList())
+                + ", issues=" + (issues == null ? null : issues.stream().map(grade -> grade.getGrade()).toList())
+                + '}';
     }
-    
+
     public String[] toArray() {
-    return new String[]{
-        String.valueOf(number),
-        daysOfWeek == null ? "" : String.join(";", daysOfWeek),
-        timesOfDay == null ? "" : String.join(";", timesOfDay),
-        semester == null ? "" : semester,
-        represents == null ? "" : String.valueOf(represents.getCode()),
-        taughtBy == null ? "" : String.valueOf(taughtBy.getId()),
-        attendedBy == null ? "" :
-                attendedBy.stream()
-                        .map(student -> String.valueOf(student.getId()))
-                        .reduce((a, b) -> a + ";" + b)
-                        .orElse(""),
-        issues == null ? "" :
-                issues.stream()
-                        .map(grade -> String.valueOf(grade.getGrade()))
-                        .reduce((a, b) -> a + ";" + b)
-                        .orElse("")
-    };
-}
-    
+        return new String[]{
+            String.valueOf(number),
+            daysOfWeek == null ? "" : String.join(";", daysOfWeek),
+            timesOfDay == null ? "" : String.join(";", timesOfDay),
+            semester == null ? "" : semester,
+            represents == null ? "" : String.valueOf(represents.getCode()),
+            taughtBy == null ? "" : String.valueOf(taughtBy.getId()),
+            attendedBy == null ? ""
+            : attendedBy.stream()
+            .map(student -> String.valueOf(student.getId()))
+            .reduce((a, b) -> a + ";" + b)
+            .orElse(""),
+            issues == null ? ""
+            : issues.stream()
+            .map(grade -> String.valueOf(grade.getGrade()))
+            .reduce((a, b) -> a + ";" + b)
+            .orElse("")
+        };
+    }
+
 }

@@ -80,10 +80,4 @@ public class Admin extends User {
         person.setRole(newRole);
     }
     
-    @Override
-    public void menu() {
-        sia.sia.ui.AdminMenu.show();
-    }
-    
-    
 }

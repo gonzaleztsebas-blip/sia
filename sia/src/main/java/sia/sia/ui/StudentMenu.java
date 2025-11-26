@@ -1,282 +1,359 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package sia.sia.ui;
 
 import java.util.List;
 import java.util.Scanner;
 import sia.sia.business.*;
-import sia.sia.data.Course;
 import sia.sia.data.Group;
+import sia.sia.data.Course;
 
-/**
- * Menu principal para estudiantes
- * Permite ver historial, inscribir materias y gestionar su informacion
- * @author luzel
- */
 public class StudentMenu {
+
+    private static final int REQUIRED_FUNDAMENTAL_CREDITS = 17;
+    private static final int REQUIRED_DISCIPLINARY_CREDITS = 118;
+    private static final int REQUIRED_FREE_ELECTIVE_CREDITS = 34;
+    private static final int REQUIRED_TOTAL_CREDITS = 169;
+    private static final int REQUIRED_LEVEL_CREDITS = 12;
+    private static final int REQUIRED_STUDENT_TOTAL_CREDITS = 181;
 
     private static String currentUser;
 
     public static boolean show(String username) {
         currentUser = username;
-        
         Scanner scan = new Scanner(System.in);
-            boolean running = true;
-
-            System.out.println("\n==============================================");
-            System.out.println("    SISTEMA DE INFORMACION ACADEMICO");
-            System.out.println("    Universidad Nacional de Colombia");
-            System.out.println("==============================================");
-            System.out.println("Bienvenido: " + username);
-
-            while (running) {
-                printMainMenu();
-
-                try {
-                    int option = Integer.parseInt(scan.nextLine().trim());
-
-                    switch (option) {
-                        case 1 -> viewAcademicHistory();
-                        case 2 -> viewCurrentEnrollments();
-                        case 3 -> enrollInCourse(scan);
-                        case 4 -> withdrawFromCourse(scan);
-                        case 5 -> viewAvailableCourses();
-                        case 6 -> viewSchedule();
-                        case 7 -> viewGradeAverage();
-                        case 8 -> viewApprovedCredits();
-                        case 0 -> {
-                            System.out.println("\nCerrando sesion...");
-                            System.out.println("Hasta pronto!\n");
-                            running = false;
-                            return false;
-                        }
-                        default -> System.out.println("Opcion invalida. Intente nuevamente.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Por favor ingrese un numero valido.");
-                } catch (Exception e) {
-                    System.out.println("Error: " + e.getMessage());
+        boolean running = true;
+        while (running) {
+            printMainMenu();
+            String opt = scan.nextLine().trim();
+            switch (opt) {
+                case "1" ->
+                    GradeManager.listStudentGrades(currentUser);
+                case "2" ->
+                    listCurrentEnrollments();
+                case "3" ->
+                    enrollInCourse(scan);
+                case "4" ->
+                    withdrawFromCourse(scan);
+                case "5" ->
+                    listAvailableCourses();
+                case "6" ->
+                    viewSchedule();
+                case "7" -> {
+                    double avg = GradeManager.calculateStudentAverage(currentUser);
+                    System.out.printf("Promedio: %.2f\n", avg);
                 }
+                case "8" -> {
+                    viewApprovedCredits();
+                }
+                case "0" -> {
+                    System.out.println("Cerrando sesion...");
+                    return false;
+                }
+                default ->
+                    System.out.println("Opcion invalida");
             }
-            return false;
-        
+        }
+        return false;
     }
 
     private static void printMainMenu() {
-        System.out.println("\n==========================================");
-        System.out.println("           MENU ESTUDIANTE");
-        System.out.println("==========================================");
-        System.out.println("1. Ver Historial Academico");
+        System.out.println("\n--- MENU ESTUDIANTE ---");
+        System.out.println("1. Ver Historial de Calificaciones");
         System.out.println("2. Ver Inscripciones Actuales");
         System.out.println("3. Inscribir Materia");
         System.out.println("4. Retirar Materia");
         System.out.println("5. Ver Cursos Disponibles");
         System.out.println("6. Ver Horario");
-        System.out.println("7. Ver Promedio General");
+        System.out.println("7. Ver Promedio");
         System.out.println("8. Ver Creditos Aprobados");
         System.out.println("0. Salir");
-        System.out.print("\nSeleccione una opcion: ");
+        System.out.print("Seleccione: ");
     }
 
-    private static void viewAcademicHistory() {
-        System.out.println("\n--- HISTORIAL ACADEMICO ---");
-        GradeManager.listStudentGrades(currentUser);
+    private static void listCurrentEnrollments() {
+        List<Group> enrollments = EnrollmentManager.getCurrentEnrollments(currentUser);
+        if (enrollments.isEmpty()) {
+            System.out.println("No tienes inscripciones activas.");
+            return;
+        }
+
+        System.out.println("\n=== INSCRIPCIONES ACTUALES ===");
+        System.out.printf("%-10s %-15s %-30s %-10s%n",
+                "GRUPO", "CURSO", "NOMBRE", "SEMESTRE");
+        System.out.println("----------------------------------------------------------------");
+
+        for (Group group : enrollments) {
+            Course course = group.getRepresents();
+            if (course != null) {
+                System.out.printf("%-10s %-15s %-30s %-10s%n",
+                        group.getNumber(),
+                        course.getCode(),
+                        course.getName().length() > 28 ? course.getName().substring(0, 25) + "..." : course.getName(),
+                        group.getSemester());
+            }
+        }
     }
 
-    private static void viewCurrentEnrollments() {
-        System.out.println("\n--- INSCRIPCIONES ACTUALES ---");
-        EnrollmentManager.listCurrentEnrollments(currentUser);
+    private static void listAvailableCourses() {
+        // Si no existe este método en EnrollmentManager, usar alternativa
+        System.out.println("\n=== CURSOS DISPONIBLES ===");
+
+        // Método alternativo si getAvailableCoursesForStudent no existe
+        List<Group> allGroups = GroupManager.getGroupsByStudent(currentUser);
+        List<Group> currentEnrollments = EnrollmentManager.getCurrentEnrollments(currentUser);
+
+        System.out.printf("%-10s %-15s %-30s %-10s%n",
+                "GRUPO", "CURSO", "NOMBRE", "SEMESTRE");
+        System.out.println("----------------------------------------------------------------");
+
+        int availableCount = 0;
+        for (Group group : allGroups) {
+            Course course = group.getRepresents();
+            if (course != null) {
+                // Verificar si ya está inscrito en este curso
+                boolean alreadyEnrolled = false;
+                for (Group enrolled : currentEnrollments) {
+                    if (enrolled.getRepresents() != null
+                            && enrolled.getRepresents().getCode() == course.getCode()) {
+                        alreadyEnrolled = true;
+                        break;
+                    }
+                }
+
+                if (!alreadyEnrolled && GroupManager.getAvailableSpots("" + group.getNumber()) > 0) {
+                    System.out.printf("%-10s %-15s %-30s %-10s%n",
+                            group.getNumber(),
+                            course.getCode(),
+                            course.getName().length() > 28 ? course.getName().substring(0, 25) + "..." : course.getName(),
+                            group.getSemester());
+                    availableCount++;
+                }
+            }
+        }
+
+        if (availableCount == 0) {
+            System.out.println("No hay cursos disponibles para inscripción.");
+        } else {
+            System.out.println("Total de cursos disponibles: " + availableCount);
+        }
     }
 
     private static void enrollInCourse(Scanner scan) {
-        System.out.println("\n--- INSCRIBIR MATERIA ---");
-
-        // Mostrar cursos disponibles
-        List<Course> availableCourses = EnrollmentManager.getAvailableCoursesForStudent(currentUser);
-
-        if (availableCourses.isEmpty()) {
-            System.out.println("No hay cursos disponibles para inscribir.");
-            return;
-        }
-
-        System.out.println("\nCursos disponibles:");
-        for (Course course : availableCourses) {
-            System.out.printf("Codigo: %s | %s | %d creditos%n",
-                    course.getCode(), course.getName(), course.getCredits());
-        }
-
-        System.out.print("\nIngrese el codigo del curso: ");
-        String courseCode = scan.nextLine().trim();
-
-        if (courseCode.isEmpty()) {
-            System.out.println("Codigo invalido.");
-            return;
-        }
-
-        // Buscar grupos disponibles para ese curso
-        List<String[]> allGroups = GroupManager.loadGroups();
-        boolean foundGroups = false;
-
-        System.out.println("\nGrupos disponibles:");
-        for (String[] groupData : allGroups) {
-            if (groupData[4].equals(courseCode)) {
-                foundGroups = true;
-                Group group = GroupManager.findGroup(groupData[0]);
-                if (group != null) {
-                    int spots = GroupManager.getAvailableSpots(groupData[0]);
-                    System.out.printf("Grupo %s | Semestre: %s | Cupos: %d | Dias: %s | Horas: %s%n",
-                            groupData[0], groupData[3], spots, groupData[1], groupData[2]);
-                }
-            }
-        }
-
-        if (!foundGroups) {
-            System.out.println("No hay grupos disponibles para este curso.");
-            return;
-        }
-
-        System.out.print("\nIngrese el numero del grupo: ");
+        System.out.print("Numero de grupo a inscribir: ");
         String groupNumber = scan.nextLine().trim();
 
-        if (groupNumber.isEmpty()) {
-            System.out.println("Numero de grupo invalido.");
-            return;
+        boolean success = EnrollmentManager.enrollStudent(currentUser, groupNumber);
+        if (success) {
+            System.out.println("Inscripción exitosa en el grupo: " + groupNumber);
+        } else {
+            System.out.println("No se pudo realizar la inscripción en el grupo: " + groupNumber);
         }
-
-        // Intentar inscribir
-        EnrollmentManager.enrollStudent(currentUser, groupNumber);
     }
 
     private static void withdrawFromCourse(Scanner scan) {
-        System.out.println("\n--- RETIRAR MATERIA ---");
-
-        List<Group> currentEnrollments = EnrollmentManager.getCurrentEnrollments(currentUser);
-
-        if (currentEnrollments.isEmpty()) {
-            System.out.println("No tiene materias inscritas actualmente.");
+        // Mostrar inscripciones actuales primero
+        List<Group> enrollments = EnrollmentManager.getCurrentEnrollments(currentUser);
+        if (enrollments.isEmpty()) {
+            System.out.println("No tienes materias inscritas para retirar.");
             return;
         }
 
-        System.out.println("\nMaterias inscritas:");
-        for (Group group : currentEnrollments) {
-            System.out.printf("Grupo %d | %s | %d creditos%n",
-                    group.getNumber(),
-                    group.getRepresents().getName(),
-                    group.getRepresents().getCredits());
+        System.out.println("\nTus inscripciones actuales:");
+        for (Group group : enrollments) {
+            Course course = group.getRepresents();
+            if (course != null) {
+                System.out.printf("Grupo: %s | Curso: %s - %s%n",
+                        group.getNumber(), course.getCode(), course.getName());
+            }
         }
 
-        System.out.print("\nIngrese el numero del grupo a retirar: ");
+        System.out.print("Numero de grupo a retirar: ");
         String groupNumber = scan.nextLine().trim();
 
-        if (groupNumber.isEmpty()) {
-            System.out.println("Numero de grupo invalido.");
-            return;
-        }
-
-        System.out.print("Esta seguro? (S/N): ");
-        String confirm = scan.nextLine().trim().toUpperCase();
-
-        if (confirm.equals("S")) {
-            EnrollmentManager.unenrollStudent(currentUser, groupNumber);
+        boolean success = EnrollmentManager.unenrollStudent(currentUser, groupNumber);
+        if (success) {
+            System.out.println("Retiro exitoso del grupo: " + groupNumber);
         } else {
-            System.out.println("Operacion cancelada.");
+            System.out.println("No se pudo realizar el retiro del grupo: " + groupNumber);
         }
-    }
-
-    private static void viewAvailableCourses() {
-        System.out.println("\n--- CURSOS DISPONIBLES ---");
-        EnrollmentManager.listAvailableCourses(currentUser);
     }
 
     private static void viewSchedule() {
-        System.out.println("\n--- MI HORARIO ---");
-
         List<Group> enrollments = EnrollmentManager.getCurrentEnrollments(currentUser);
-
         if (enrollments.isEmpty()) {
-            System.out.println("No tiene materias inscritas.");
+            System.out.println("No tienes materias inscritas");
             return;
         }
 
-        System.out.println("\nHorario actual:");
-        System.out.println("==========================================");
-
+        System.out.println("\n=== HORARIO ACTUAL ===");
         for (Group group : enrollments) {
-            System.out.printf("\n%s (Grupo %d)%n",
-                    group.getRepresents().getName(),
-                    group.getNumber());
-
-            String[] days = group.getDaysOfWeek();
-            String[] times = group.getTimesOfDay();
-
-            if (days != null && times != null) {
-                for (int i = 0; i < days.length && i < times.length; i++) {
-                    System.out.printf("  %s: %s%n",
-                            getDayName(days[i]),
-                            times[i]);
+            Course course = group.getRepresents();
+            if (course != null) {
+                // Asumiendo que Group tiene métodos para obtener horario
+                String scheduleInfo = "Horario no disponible";
+                // Si existe getScheduleFormatted(), usarlo, sino mostrar información básica
+                try {
+                    scheduleInfo = group.getScheduleFormatted();
+                } catch (Exception e) {
+                    scheduleInfo = "Consulta horario con administrador";
                 }
-            }
-        }
-        System.out.println("==========================================");
-    }
 
-    private static void viewGradeAverage() {
-        System.out.println("\n--- PROMEDIO GENERAL ---");
-
-        double average = GradeManager.calculateStudentAverage(currentUser);
-
-        if (average == 0.0) {
-            System.out.println("Aun no tiene calificaciones registradas.");
-        } else {
-            System.out.printf("Promedio general: %.2f%n", average);
-
-            if (average >= 4.0) {
-                System.out.println("Estado: Excelente");
-            } else if (average >= 3.5) {
-                System.out.println("Estado: Bueno");
-            } else if (average >= 3.0) {
-                System.out.println("Estado: Aceptable");
-            } else {
-                System.out.println("Estado: Bajo");
+                System.out.printf("%s (%s - Grupo %s) -> %s%n",
+                        course.getName(),
+                        course.getCode(),
+                        group.getNumber(),
+                        scheduleInfo);
             }
         }
     }
 
     private static void viewApprovedCredits() {
-        System.out.println("\n--- CREDITOS APROBADOS ---");
 
-        int approvedCredits = GradeManager.calculateApprovedCredits(currentUser);
+
         List<String> passedCourses = GradeManager.getPassedCourses(currentUser);
+        if (passedCourses.isEmpty()) {
+            System.out.println("No tienes cursos aprobados.");
+            return;
+        }
 
-        System.out.println("Total de creditos aprobados: " + approvedCredits);
+        // Inicializar contadores de créditos por categoría
+        int fundamentalCredits = 0;
+        int disciplinaryCredits = 0;
+        int freeElectiveCredits = 0;
+        int levelCredits = 0;
+
+        System.out.println("\n=== CRÉDITOS APROBADOS ===");
+        System.out.println("Cursos aprobados: " + String.join(", ", passedCourses));
         System.out.println("Total de cursos aprobados: " + passedCourses.size());
 
-        if (!passedCourses.isEmpty()) {
-            System.out.println("\nCursos aprobados:");
-            for (String courseCode : passedCourses) {
-                var course = CourseManager.findCourse(Long.parseLong(courseCode));
+        // Calcular créditos por categoría basado en el tipo de créditos de cada materia
+        for (String courseCode : passedCourses) {
+            try {
+                long code = Long.parseLong(courseCode);
+                Course course = CourseManager.findCourse(code);
                 if (course != null) {
-                    System.out.printf("- %s (%s) - %d creditos%n",
-                            course.getName(),
-                            course.getCode(),
-                            course.getCredits());
+                    // Asumiendo que getCredits() retorna un array donde:
+                    // créditos[0] = fundamentales, créditos[1] = disciplinarios, 
+                    // créditos[2] = libre elección, créditos[3] = nivel
+                    int[] credits = course.getCredits();
+
+                    if (credits.length >= 4) {
+                        fundamentalCredits += credits[0];
+                        disciplinaryCredits += credits[1];
+                        freeElectiveCredits += credits[2];
+                        levelCredits += credits[3];
+                    } else if (credits.length >= 3) {
+                        fundamentalCredits += credits[0];
+                        disciplinaryCredits += credits[1];
+                        freeElectiveCredits += credits[2];
+                    } else if (credits.length >= 2) {
+                        fundamentalCredits += credits[0];
+                        disciplinaryCredits += credits[1];
+                    } else if (credits.length >= 1) {
+                        disciplinaryCredits += credits[0]; // Por defecto a disciplinarios
+                    }
                 }
+            } catch (NumberFormatException e) {
+                // Ignorar códigos inválidos
             }
         }
-    }
 
-    private static String getDayName(String code) {
-        switch (code.trim().toUpperCase()) {
-            case "L": return "Lunes";
-            case "M": return "Martes";
-            case "W": return "Miercoles";
-            case "J": return "Jueves";
-            case "V": return "Viernes";
-            case "S": return "Sabado";
-            case "D": return "Domingo";
-            default: return code;
+        int totalApprovedCredits = fundamentalCredits + disciplinaryCredits + freeElectiveCredits;
+        int totalStudentCredits = totalApprovedCredits + levelCredits;
+
+        // Mostrar tabla similar a la imagen
+        System.out.println("\n" + "=".repeat(90));
+        System.out.printf("%-15s | %-10s | %-12s | %-12s | %-8s | %-7s | %-15s%n",
+                "TIPO", "FUNDAM.", "DISCIPL.", "LIBRE E.", "TOTAL", "NIVEL", "TOTAL EST.");
+        System.out.println("-".repeat(90));
+
+        // Línea de créditos exigidos
+        System.out.printf("%-15s | %-10d | %-12d | %-12d | %-8d | %-7d | %-15d%n",
+                "EXIGIDOS",
+                REQUIRED_FUNDAMENTAL_CREDITS,
+                REQUIRED_DISCIPLINARY_CREDITS,
+                REQUIRED_FREE_ELECTIVE_CREDITS,
+                REQUIRED_TOTAL_CREDITS,
+                REQUIRED_LEVEL_CREDITS,
+                REQUIRED_STUDENT_TOTAL_CREDITS);
+
+        // Línea de créditos aprobados
+        System.out.printf("%-15s | %-10d | %-12d | %-12d | %-8d | %-7d | %-15d%n",
+                "APROBADOS",
+                fundamentalCredits,
+                disciplinaryCredits,
+                freeElectiveCredits,
+                totalApprovedCredits,
+                levelCredits,
+                totalStudentCredits);
+
+        // Línea de créditos aprobados según plan (sin nivel)
+        System.out.printf("%-15s | %-10d | %-12d | %-12d | %-8d | %-7s | %-15d%n",
+                "APROBADOS PLAN",
+                fundamentalCredits,
+                disciplinaryCredits,
+                freeElectiveCredits,
+                totalApprovedCredits,
+                "--",
+                totalApprovedCredits);
+
+        // Línea de créditos pendientes
+        int pendingFundamental = Math.max(0, REQUIRED_FUNDAMENTAL_CREDITS - fundamentalCredits);
+        int pendingDisciplinary = Math.max(0, REQUIRED_DISCIPLINARY_CREDITS - disciplinaryCredits);
+        int pendingFreeElective = Math.max(0, REQUIRED_FREE_ELECTIVE_CREDITS - freeElectiveCredits);
+        int pendingTotal = Math.max(0, REQUIRED_TOTAL_CREDITS - totalApprovedCredits);
+        int pendingLevel = Math.max(0, REQUIRED_LEVEL_CREDITS - levelCredits);
+        int pendingStudentTotal = Math.max(0, REQUIRED_STUDENT_TOTAL_CREDITS - totalStudentCredits);
+
+        System.out.printf("%-15s | %-10d | %-12d | %-12d | %-8d | %-7d | %-15d%n",
+                "PENDIENTES",
+                pendingFundamental,
+                pendingDisciplinary,
+                pendingFreeElective,
+                pendingTotal,
+                pendingLevel,
+                pendingStudentTotal);
+
+        System.out.println("=".repeat(90));
+
+        // Mostrar porcentajes de avance
+        System.out.println("\n--- PORCENTAJE DE AVANCE ---");
+        System.out.printf("Fundamentales: %d/%d (%.1f%%)%n",
+                fundamentalCredits, REQUIRED_FUNDAMENTAL_CREDITS,
+                (REQUIRED_FUNDAMENTAL_CREDITS > 0
+                        ? (fundamentalCredits * 100.0 / REQUIRED_FUNDAMENTAL_CREDITS) : 0));
+
+        System.out.printf("Disciplinarios: %d/%d (%.1f%%)%n",
+                disciplinaryCredits, REQUIRED_DISCIPLINARY_CREDITS,
+                (REQUIRED_DISCIPLINARY_CREDITS > 0
+                        ? (disciplinaryCredits * 100.0 / REQUIRED_DISCIPLINARY_CREDITS) : 0));
+
+        System.out.printf("Libre elección: %d/%d (%.1f%%)%n",
+                freeElectiveCredits, REQUIRED_FREE_ELECTIVE_CREDITS,
+                (REQUIRED_FREE_ELECTIVE_CREDITS > 0
+                        ? (freeElectiveCredits * 100.0 / REQUIRED_FREE_ELECTIVE_CREDITS) : 0));
+
+        System.out.printf("Nivel: %d/%d (%.1f%%)%n",
+                levelCredits, REQUIRED_LEVEL_CREDITS,
+                (REQUIRED_LEVEL_CREDITS > 0
+                        ? (levelCredits * 100.0 / REQUIRED_LEVEL_CREDITS) : 0));
+
+        System.out.printf("Total plan: %d/%d (%.1f%%)%n",
+                totalApprovedCredits, REQUIRED_TOTAL_CREDITS,
+                (REQUIRED_TOTAL_CREDITS > 0
+                        ? (totalApprovedCredits * 100.0 / REQUIRED_TOTAL_CREDITS) : 0));
+
+        System.out.printf("Total general: %d/%d (%.1f%%)%n",
+                totalStudentCredits, REQUIRED_STUDENT_TOTAL_CREDITS,
+                (REQUIRED_STUDENT_TOTAL_CREDITS > 0
+                        ? (totalStudentCredits * 100.0 / REQUIRED_STUDENT_TOTAL_CREDITS) : 0));
+
+        // Mostrar resumen de estado
+        System.out.println("\n--- ESTADO ACTUAL ---");
+        if (totalStudentCredits >= REQUIRED_STUDENT_TOTAL_CREDITS) {
+            System.out.println("¡FELICIDADES! Has completado todos los créditos requeridos.");
+        } else {
+            int remaining = REQUIRED_STUDENT_TOTAL_CREDITS - totalStudentCredits;
+            System.out.printf("Te faltan %d créditos para completar tu plan de estudios.%n", remaining);
         }
     }
 }

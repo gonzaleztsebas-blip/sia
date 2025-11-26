@@ -1,8 +1,5 @@
-45418,Calculo Diferencial,4,[]
-96652,Algebra Lineal,4,[]
-92682,Calculo Integral,4,[10001]
-45564,Curso Basico,3,[]
-83717,Curso Intermedio,3,[]
-43323,Curso Avanzado,3,[]
-75067,Fisica I,4,[]
-13376,Programacion Basica,3,[]
+"34330","Calculo Diferencial","3,0,0,0","[]"
+"26940","Algebra Lineal","0,2,0,0","[]"
+"67648","Calculo Integral","0,0,4,0","[34330]"
+"97818","Fisica I","2,0,0,0","[]"
+"14669","Programacion Basica","0,3,0,0","[]"

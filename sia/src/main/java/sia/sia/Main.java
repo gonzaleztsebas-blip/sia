@@ -236,7 +236,7 @@ public class Main {
         
         switch (role.toLowerCase()) {
             case "admin" -> {
-                return AdminMenu.show();
+                return AdminMenu.show(username);
             }
             case "student" -> {
                 return StudentMenu.show(username);
