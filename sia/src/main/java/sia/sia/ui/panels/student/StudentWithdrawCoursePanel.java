@@ -27,6 +27,10 @@ public class StudentWithdrawCoursePanel extends JPanel {
         JLabel groupLabel = new JLabel("Seleccionar Materia a Retirar:");
         JComboBox<String> groupCombo = new JComboBox<>();
         
+        // SOLUCIÓN: Configurar el JComboBox para evitar el problema de superposición
+        groupCombo.setMaximumRowCount(6);
+        groupCombo.setLightWeightPopupEnabled(false); // ← ESTA ES LA LÍNEA CLAVE
+        
         JButton withdrawBtn = new JButton("Retirar");
         withdrawBtn.addActionListener(e -> {
             if (groupCombo.getSelectedIndex() < 0) {

@@ -4,7 +4,6 @@ import sia.sia.business.GroupManager;
 import sia.sia.data.Group;
 import javax.swing.*;
 import java.awt.*;
-import sia.sia.ui.UIColors;
 
 public class ProfessorGroupSchedulePanel extends JPanel {
     private String currentUser;

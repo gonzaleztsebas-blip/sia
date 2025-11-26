@@ -28,7 +28,12 @@ public class StudentAvailableCoursesPanel extends JPanel {
         JLabel componentLabel = new JLabel("Componente de créditos:");
 
         componentCombo = new JComboBox<>(componentOptions);
-        componentCombo.setMaximumRowCount(6);
+        componentCombo.setMaximumRowCount(4); // Limitar filas visibles
+        componentCombo.setLightWeightPopupEnabled(false); // Usar ventana pesada
+
+        // Mejorar la apariencia del combo box
+        componentCombo.setBackground(Color.WHITE);
+        componentCombo.setFont(componentCombo.getFont().deriveFont(Font.PLAIN));
 
         JButton refreshBtn = new JButton("Actualizar");
 
@@ -51,6 +56,7 @@ public class StudentAvailableCoursesPanel extends JPanel {
         table.setFillsViewportHeight(true);
 
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setPreferredSize(new Dimension(600, 400)); // Tamaño preferido
 
         refreshBtn.addActionListener(e -> loadAvailableCourses());
         componentCombo.addActionListener(e -> loadAvailableCourses());

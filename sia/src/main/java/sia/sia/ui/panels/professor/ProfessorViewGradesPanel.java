@@ -9,7 +9,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.List;
-import sia.sia.ui.UIColors;
 
 public class ProfessorViewGradesPanel extends JPanel {
     private String currentUser;
@@ -21,7 +20,6 @@ public class ProfessorViewGradesPanel extends JPanel {
     
     private void initComponents() {
         setLayout(new BorderLayout());
-        setBackground(UIColors.PANEL_SOFT);
         setBorder(BorderFactory.createTitledBorder("Ver Calificaciones del Grupo"));
         
         JPanel formPanel = new JPanel();

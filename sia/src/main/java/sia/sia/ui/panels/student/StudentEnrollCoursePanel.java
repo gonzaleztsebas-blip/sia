@@ -28,11 +28,13 @@ public class StudentEnrollCoursePanel extends JPanel {
         
         JLabel courseLabel = new JLabel("Seleccionar Curso:");
         JComboBox<String> courseCombo = new JComboBox<>();
-        courseCombo.setMaximumRowCount(5); // Mostrar máximo 5 opciones a la vez
-              
+        courseCombo.setMaximumRowCount(5);
+        courseCombo.setLightWeightPopupEnabled(false); // ← SOLUCIÓN PARA courseCombo
+        
         JLabel groupLabel = new JLabel("Seleccionar Grupo:");
         JComboBox<String> groupCombo = new JComboBox<>();
-        groupCombo.setMaximumRowCount(5);  
+        groupCombo.setMaximumRowCount(5);
+        groupCombo.setLightWeightPopupEnabled(false); // ← SOLUCIÓN PARA groupCombo
         
         JButton enrollBtn = new JButton("Inscribir");
         enrollBtn.addActionListener(e -> {
